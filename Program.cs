@@ -6,7 +6,9 @@ namespace MyApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            string[,] stringArray = new string[2, 3]; 
+            
+            Console.WriteLine(stringArray.Length);
             Console.ReadKey();
         }
     }
