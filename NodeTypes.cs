@@ -20,28 +20,28 @@ class Empty : NodeType
 class Carrier : NodeType
 {
     
-    public int segments = 5;
+    public const int segments = 5;
 }
 
 
 
 class BattleShip : NodeType
 {
-    public int segments = 4;
+    public const int segments = 4;
 }
 
 
 
 class Cruiser : NodeType
 {
-    public int segments = 3;
+    public const int segments = 3;
 }
 
 
 
 class Destroyer : NodeType
 {
-    public int segments = 2;
+    public const int segments = 2;
 }
 
 
@@ -49,8 +49,7 @@ class Destroyer : NodeType
 class Submarine : NodeType
 {
     static Random rng = new();
-    public int segments = 1;
-
+    public const int segments = 1;
     public override void Place()
     {
         bool validPositionFound = false;
