@@ -1,7 +1,7 @@
 abstract class NodeType
 {
     public bool nodeFilled = true;
-    public virtual void Place()
+    public virtual void Place(NodeType[,] chosenGrid)
     {
         throw new NotImplementedException();
     }
@@ -50,7 +50,7 @@ class Submarine : NodeType
 {
     static Random rng = new();
     public const int segments = 1;
-    public override void Place()
+    public override void Place(NodeType[,] chosenGrid)
     {
         bool validPositionFound = false;
 
@@ -59,9 +59,9 @@ class Submarine : NodeType
             int coord1 = rng.Next(0, 8);
             int coord2 = rng.Next(0, 8);
 
-            if(!Grid.node[coord1, coord2].nodeFilled)
+            if(!chosenGrid[coord1, coord2].nodeFilled)
             {
-                Grid.node[coord1, coord2] = new Submarine();
+                chosenGrid[coord1, coord2] = new Submarine();
                 validPositionFound = true;
             }
         }

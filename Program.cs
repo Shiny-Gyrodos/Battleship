@@ -6,10 +6,10 @@ namespace MyApp
     {
         static void Main(string[] args)
         {
-            string[,] stringArray = new string[2, 3]; 
-            
-            Console.WriteLine(stringArray.Length);
+            string[,] stringArray = new string[2, 3]; // Unimportant experiment
+
+            Console.WriteLine(stringArray.Length); // Unimportant experiment
             Console.ReadKey();
         }
     }
-}
+} 
