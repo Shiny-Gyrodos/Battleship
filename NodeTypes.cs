@@ -1,7 +1,7 @@
-abstract class NodeType
+abstract class NodeType // Swap from a parent/child class to an interface later.
 {
     public bool nodeFilled = true;
-    public virtual void Place(NodeType[,] chosenGrid)
+    public virtual void Place(NodeType[,] chosenGrid) // Won't use this after all
     {
         throw new NotImplementedException();
     }
@@ -10,8 +10,7 @@ abstract class NodeType
 
 
 class Empty : NodeType
-{
-    
+{   
     public char icon = 'O';
 }
 
