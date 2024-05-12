@@ -1,68 +1,9 @@
-abstract class NodeType // Swap from a parent/child class to an interface later.
+using System.Dynamic;
+
+class Node(bool nodeFilled, bool isMine, char icon, string shipName)
 {
-    public bool nodeFilled = true;
-    public virtual void Place(NodeType[,] chosenGrid) // Won't use this after all
-    {
-        throw new NotImplementedException();
-    }
-}
-
-
-
-class Empty : NodeType
-{   
-    public char icon = 'O';
-}
-
-
-
-class Carrier : NodeType
-{
-    
-    public const int segments = 5;
-}
-
-
-
-class BattleShip : NodeType
-{
-    public const int segments = 4;
-}
-
-
-
-class Cruiser : NodeType
-{
-    public const int segments = 3;
-}
-
-
-
-class Destroyer : NodeType
-{
-    public const int segments = 2;
-}
-
-
-
-class Submarine : NodeType
-{
-    static Random rng = new();
-    public const int segments = 1;
-    public override void Place(NodeType[,] chosenGrid)
-    {
-        bool validPositionFound = false;
-
-        while (!validPositionFound)
-        {
-            int coord1 = rng.Next(0, 8);
-            int coord2 = rng.Next(0, 8);
-
-            if(!chosenGrid[coord1, coord2].nodeFilled)
-            {
-                chosenGrid[coord1, coord2] = new Submarine();
-                validPositionFound = true;
-            }
-        }
-    }
+    public bool NodeFilled { get; set; } = nodeFilled;
+    public bool IsMine { get; set; } = isMine;
+    public char Icon { get; set; } = icon;
+    public string ShipName { get; set; } = shipName;
 }
