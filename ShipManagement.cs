@@ -1,6 +1,14 @@
-class PlaceShip
+abstract class Ship
 {
     // Add enum for ship name reference.
+    enum Ships
+    {
+        Submarine = 1,
+        Destroyer = 2,
+        Cruiser = 3,
+        Battleship = 4,
+        Carrier = 5,
+    }
     static Random rng = new(); // Remove as many static variables as possible.
     static bool shipPlaced = false;
     static int coord1 = rng.Next(0, 8);
@@ -8,7 +16,8 @@ class PlaceShip
     static List<int> horizontalIncrements = [1, -1];
     static List<int> verticalIncrements = [1, -1];
     static int possibleIncrements = horizontalIncrements.Count + verticalIncrements.Count;
-    public void Place(Node[,] chosenGrid, int shipSegments)
+    static Node[] shipStorage = [new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
+    public static void Place(Node[,] chosenGrid, int shipSegments)
     {
         while(!shipPlaced)
         {  
@@ -46,26 +55,26 @@ class PlaceShip
 
 
 
-    public void PlaceShipNodes(int shipSegments, int chosenIncrement, bool horizontal, Node[,] chosenGrid)
+    static void PlaceShipNodes(int shipSegments, int chosenIncrement, bool horizontal, Node[,] chosenGrid)
     {
         for (int i = 0; i < shipSegments - 1; i++)
         {
             if (horizontal)
             {
                 coord1 += chosenIncrement;
-                chosenGrid[coord1, coord2].NodeFilled = true; // Add more variable alterations later
+                chosenGrid[coord1, coord2] = shipStorage[shipSegments - 1]; // Add more variable alterations later
             }
             else
             {
                 coord2 += chosenIncrement;
-                chosenGrid[coord1, coord2].NodeFilled = true; // Add more variable alterations later
+                chosenGrid[coord1, coord2] = shipStorage[shipSegments - 1]; // Add more variable alterations later
             }
         }
     }
 
 
 
-    public bool NodesValid(int shipSegments, bool horizontal, Node[,] chosenGrid)
+    static bool NodesValid(int shipSegments, bool horizontal, Node[,] chosenGrid)
     {
         int emptyNodeCount = 0;
 
@@ -78,7 +87,7 @@ class PlaceShip
             {
                 testCoord += chosenIncrement;
                 
-                emptyNodeCount = chosenGrid[testCoord, coord2].nodeFilled ? emptyNodeCount : emptyNodeCount + 1;
+                emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;
             }
 
             if (emptyNodeCount == shipSegments - 1)
@@ -101,7 +110,7 @@ class PlaceShip
             {
                 testCoord += chosenIncrement;
 
-                emptyNodeCount = chosenGrid[coord1, testCoord].nodeFilled ? emptyNodeCount : emptyNodeCount + 1;
+                emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;
             }
 
             if (emptyNodeCount == shipSegments - 1)
@@ -119,7 +128,7 @@ class PlaceShip
 
 
 
-    public void RemoveInvalidIncrements(int shipSegments) // Prevents out-of-bounds exceptions for each individual ship.
+    static void RemoveInvalidIncrements(int shipSegments) // Prevents out-of-bounds exceptions for each individual ship.
     {
         if (coord1 + shipSegments - 1 > 7)
         {
