@@ -14,7 +14,18 @@ abstract class Ship
     {
         bool nodeValid = true;
 
-        while(!shipPlaced)
+        if (horizontalIncrements.Count == 0) // Clean up later
+        {
+            horizontalIncrements.Add(1);
+            horizontalIncrements.Add(-1);
+        }
+        if (verticalIncrements.Count == 0)
+        {
+            verticalIncrements.Add(1);
+            verticalIncrements.Add(-1);
+        }
+
+        while(!shipPlaced) // Repeats infinitely
         {  
             if (possibleIncrements == 0)
             {
@@ -26,7 +37,7 @@ abstract class Ship
 
             RemoveInvalidIncrements(shipSegments);
 
-            while (possibleIncrements > 0) // Isn't broken out of when the loop it's nested in is. FIX THIS!
+            while (possibleIncrements > 0) // Repeats infinitely
             {
                 bool horizontal = false;
 
@@ -47,7 +58,7 @@ abstract class Ship
             }
         }
 
-        if (!nodeValid) // If node wasn't valid it is set back to empty.
+        if (!nodeValid) // If node wasn't valid it is set back to empty. Clean up later
         {
             chosenGrid[ranCoord1, randCoord2] = nodeTypeStorage[0];
         }
@@ -70,6 +81,10 @@ abstract class Ship
                 chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
             }
         }
+
+        horizontalIncrements.Clear();
+        verticalIncrements.Clear();
+        shipPlaced = true;
     }
 
 
@@ -130,20 +145,20 @@ abstract class Ship
 
     static void RemoveInvalidIncrements(int shipSegments) // Prevents out-of-bounds exceptions for each individual ship.
     {
-        if (coord1 + shipSegments - 1 > 7)
+        if (coord1 + (shipSegments - 1) > 7)
         {
             horizontalIncrements.Remove(1);
         }
-        else if (coord1 - shipSegments - 1 < 0)
+        else if (coord1 - (shipSegments - 1) < 0)
         {
             horizontalIncrements.Remove(-1);
         }
 
-        if (coord2 + shipSegments - 1 > 7)
+        if (coord2 + (shipSegments - 1) > 7)
         {
             verticalIncrements.Remove(1);
         }
-        else if (coord2 + shipSegments - 1 < 0)
+        else if (coord2 + (shipSegments - 1) < 0)
         {
             verticalIncrements.Remove(1);
         }
