@@ -1,24 +1,19 @@
 abstract class Ship
 {
-    // Add enum for ship name reference.
-    enum Ships
-    {
-        Submarine = 1,
-        Destroyer = 2,
-        Cruiser = 3,
-        Battleship = 4,
-        Carrier = 5,
-    }
     static Random rng = new(); // Remove as many static variables as possible.
     static bool shipPlaced = false;
-    static int coord1 = rng.Next(0, 8);
-    static int coord2 = rng.Next(0, 8);
+    static int ranCoord1 = rng.Next(0, 8);
+    static int randCoord2 = rng.Next(0, 8);
+    static int coord1 = ranCoord1;
+    static int coord2 = randCoord2;
     static List<int> horizontalIncrements = [1, -1];
     static List<int> verticalIncrements = [1, -1];
     static int possibleIncrements = horizontalIncrements.Count + verticalIncrements.Count;
-    static Node[] shipStorage = [new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
+    static Node[] nodeTypeStorage = [new Node(false, false, ' ', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
     public static void Place(Node[,] chosenGrid, int shipSegments)
     {
+        bool nodeValid = true;
+
         while(!shipPlaced)
         {  
             if (possibleIncrements == 0)
@@ -27,11 +22,11 @@ abstract class Ship
                 coord2 = rng.Next(0, 8);
             }
 
-            chosenGrid[coord1, coord2] = chosenGrid[coord1, coord2].NodeFilled ? chosenGrid[coord1, coord2] : shipStorage[shipSegments - 1];
+            chosenGrid[coord1, coord2] = chosenGrid[coord1, coord2].NodeFilled ? chosenGrid[coord1, coord2] : nodeTypeStorage[shipSegments];
 
             RemoveInvalidIncrements(shipSegments);
 
-            while (possibleIncrements > 0)
+            while (possibleIncrements > 0) // Isn't broken out of when the loop it's nested in is. FIX THIS!
             {
                 bool horizontal = false;
 
@@ -48,8 +43,13 @@ abstract class Ship
                     horizontal = true;
                 }
 
-                NodesValid(shipSegments, horizontal, chosenGrid);
+                nodeValid = NodesValid(shipSegments, horizontal, chosenGrid);
             }
+        }
+
+        if (!nodeValid) // If node wasn't valid it is set back to empty.
+        {
+            chosenGrid[ranCoord1, randCoord2] = nodeTypeStorage[0];
         }
     }
 
@@ -62,12 +62,12 @@ abstract class Ship
             if (horizontal)
             {
                 coord1 += chosenIncrement;
-                chosenGrid[coord1, coord2] = shipStorage[shipSegments - 1]; // Add more variable alterations later
+                chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
             }
             else
             {
                 coord2 += chosenIncrement;
-                chosenGrid[coord1, coord2] = shipStorage[shipSegments - 1]; // Add more variable alterations later
+                chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
             }
         }
     }
