@@ -6,28 +6,21 @@ abstract class Ship
     static int randCoord2 = rng.Next(0, 8);
     static int coord1 = ranCoord1;
     static int coord2 = randCoord2;
-    static List<int> horizontalIncrements = [1, -1];
-    static List<int> verticalIncrements = [1, -1];
-    static int possibleIncrements = horizontalIncrements.Count + verticalIncrements.Count;
-    static Node[] nodeTypeStorage = [new Node(false, false, ' ', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
+    static List<int> horizontalIncrements = [];
+    static List<int> verticalIncrements = [];
+    static Node[] nodeTypeStorage = [new Node(false, false, 'O', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
     public static void Place(Node[,] chosenGrid, int shipSegments)
     {
         bool nodeValid = true;
 
-        if (horizontalIncrements.Count == 0) // Clean up later
-        {
-            horizontalIncrements.Add(1);
-            horizontalIncrements.Add(-1);
-        }
-        if (verticalIncrements.Count == 0)
-        {
-            verticalIncrements.Add(1);
-            verticalIncrements.Add(-1);
-        }
+        horizontalIncrements.Add(1);
+        horizontalIncrements.Add(-1);
+        verticalIncrements.Add(1);
+        verticalIncrements.Add(-1);
 
-        while(!shipPlaced) // Repeats infinitely
+        while(!shipPlaced)
         {  
-            if (possibleIncrements == 0)
+            if (verticalIncrements.Count + horizontalIncrements.Count == 0)
             {
                 coord1 = rng.Next(0, 8);
                 coord2 = rng.Next(0, 8);
@@ -37,7 +30,7 @@ abstract class Ship
 
             RemoveInvalidIncrements(shipSegments);
 
-            while (possibleIncrements > 0) // Repeats infinitely
+            while (horizontalIncrements.Count + verticalIncrements.Count > 0)
             {
                 bool horizontal = false;
 

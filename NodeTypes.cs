@@ -1,5 +1,4 @@
 using System.Dynamic;
-
 class Node(bool nodeFilled, bool isMine, char icon, int shipType)
 {
     static string[] shipTypes = ["Empty", "Submarine", "Destroyer", "Cruiser", "Battleship", "Carrier"];

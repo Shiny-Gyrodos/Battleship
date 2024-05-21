@@ -15,7 +15,7 @@ namespace MyApp
             gridController.Display();
             Console.ReadKey();
 
-            Ship.Place(gridController.playerGrid, 1);
+            Ship.Place(gridController.playerGrid, 1); // Issues with placing multiple ships. Places individual ones fine.
             Ship.Place(gridController.playerGrid, 4);
             
             gridController.Display();
