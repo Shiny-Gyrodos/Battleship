@@ -152,4 +152,14 @@ abstract class Ship
             coord2 = rng.Next(0, 8);
         }
     }
+
+
+
+    public static void PlaceAll(Node[,] chosenGrid)
+    {
+        for (int i = 1; i <= 5; i++)
+        {
+            Place(chosenGrid, i);
+        }
+    }
 }
