@@ -2,16 +2,13 @@ abstract class Ship
 {
     static Random rng = new(); // Remove as many static variables as possible.
     static bool shipPlaced;
-    static int ranCoord1 = rng.Next(0, 8);
-    static int ranCoord2 = rng.Next(0, 8);
-    static int coord1 = ranCoord1;
-    static int coord2 = ranCoord2;
+    static int coord1 = rng.Next(0, 8);
+    static int coord2 = rng.Next(0, 8);
     static List<int> horizontalIncrements = [];
     static List<int> verticalIncrements = [];
     static Node[] nodeTypeStorage = [new Node(false, false, 'O', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
     public static void Place(Node[,] chosenGrid, int shipSegments)
     {
-        ReinitializeVariables(true);
         ReinitializeVariables(false);
         bool nodeValid = true;
 
@@ -22,7 +19,7 @@ abstract class Ship
 
             if (verticalIncrements.Count + horizontalIncrements.Count == 0)
             {
-                ReinitializeVariables(true);
+                ReinitializeVariables(false);
             }
 
             if (chosenGrid[coord1, coord2].NodeFilled)
@@ -44,21 +41,24 @@ abstract class Ship
 
                 if (horizontalIncrements.Count > 0 && verticalIncrements.Count > 0) // Clean up if/else chain
                 {
+                    //Console.WriteLine(44); // Seems to enter into this if statement when bugging out.
                     isHorizontal = rng.Next(1, 3) > 1.5;
                 }
                 else if (horizontalIncrements.Count == 0)
                 {
+                    //Console.WriteLine(49);
                     isHorizontal = false;
                 }
                 else if (verticalIncrements.Count == 0)
                 {
+                    //Console.WriteLine(54);
                     isHorizontal = true;
                 }
 
                 nodeValid = NodesValid(shipSegments, isHorizontal, chosenGrid);
             }
 
-            chosenGrid[ranCoord1, ranCoord2] = !nodeValid ? nodeTypeStorage[0] : chosenGrid[ranCoord1, ranCoord2]; // If node wasn't valid it is set back to empty.
+            chosenGrid[coord1, coord2] = !nodeValid ? nodeTypeStorage[0] : chosenGrid[coord1, coord2]; // If node wasn't valid it is set back to empty.
         }
     }
 
@@ -66,6 +66,8 @@ abstract class Ship
 
     static void PlaceShipNodes(int shipSegments, int chosenIncrement, bool horizontal, Node[,] chosenGrid)
     {
+        //Console.WriteLine("PlaceShipNodes"); // Doesn't make it here.
+
         for (int i = 0; i < shipSegments - 1; i++)
         {
             if (horizontal)
@@ -89,14 +91,15 @@ abstract class Ship
 
     static bool NodesValid(int shipSegments, bool isHorizontal, Node[,] chosenGrid)
     {
+        //Console.WriteLine("NodesValid"); // Debugging
         int emptyNodeCount = 0;
 
         if (isHorizontal)
         {
             int testCoord = coord1;
-            int chosenIncrement = rng.Next(0, horizontalIncrements.Count);
+            int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)];
 
-            for(int i = 0; i < shipSegments - 1; i++)
+            for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
                 emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;
@@ -116,9 +119,9 @@ abstract class Ship
         else
         {
             int testCoord = coord2;
-            int chosenIncrement = rng.Next(0, verticalIncrements.Count);
+            int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)];
 
-            for(int i = 0; i < shipSegments - 1; i++)
+            for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
                 emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;
@@ -162,14 +165,12 @@ abstract class Ship
 
 
 
-    static void ReinitializeVariables(bool randomizeCoords)
+    static void ReinitializeVariables(bool randomizeCoords) // Resets variables for placing the next ship
     {
         if (randomizeCoords)
         {
-            ranCoord1 = rng.Next(0, 8);
-            ranCoord2 = rng.Next(0, 8);
-            coord1 = ranCoord1;
-            coord2 = ranCoord2;
+            coord1 = rng.Next(0, 8);
+            coord2 = rng.Next(0, 8);
         }
         else
         {
@@ -178,8 +179,8 @@ abstract class Ship
             horizontalIncrements.Add(-1);
             verticalIncrements.Add(1);
             verticalIncrements.Add(-1);
-            ranCoord1 = rng.Next(0, 8);
-            ranCoord2 = rng.Next(0, 8);
+            coord1 = rng.Next(0, 8);
+            coord2 = rng.Next(0, 8);
         }
     }
 }
