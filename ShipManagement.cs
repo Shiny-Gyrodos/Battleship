@@ -18,7 +18,7 @@ abstract class Ship
         while(!shipPlaced)
         {  
             //Console.WriteLine(18); // Debugging
-            bool startingNodeValid = false;
+            bool startingNodeEmpty = false;
 
             if (verticalIncrements.Count + horizontalIncrements.Count == 0)
             {
@@ -32,12 +32,12 @@ abstract class Ship
             else
             {
                 chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
-                startingNodeValid = true;
+                startingNodeEmpty = true;
             }
 
             RemoveInvalidIncrements(shipSegments);
 
-            while (horizontalIncrements.Count + verticalIncrements.Count > 0 && startingNodeValid) // Still sometimes loops infinitely
+            while (horizontalIncrements.Count + verticalIncrements.Count > 0 && startingNodeEmpty) // Still loops infinitely sometimes
             {
                 //Console.WriteLine(41); // Debugging
                 bool isHorizontal = false;
