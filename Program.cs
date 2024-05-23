@@ -6,30 +6,12 @@ namespace MyApp
     {
         static void Main(string[] args)
         { 
-            Grid gridController = new();
+            Display display = new();
 
-            gridController.Create(gridController.playerGrid);
-            gridController.Create(gridController.opponentGrid); // Makes all the grids
-            gridController.Create(gridController.opponentGridHidden);
+            display.CreateGrid(display.playerGrid);
+            display.CreateGrid(display.opponentGrid); // Makes all the grids
+            display.CreateGrid(display.opponentGridHidden);
 
-            gridController.Display();
-            Console.ReadKey();
-
-            Ship.Place(gridController.playerGrid, 5); // Issues with placing multiple ships. Occasional error for placing individual ships aswell.
-            gridController.Display();
-            Console.ReadKey();
-            Ship.Place(gridController.playerGrid, 4);
-            gridController.Display();
-            Console.ReadKey();
-            Ship.Place(gridController.playerGrid, 3);
-            gridController.Display();
-            Console.ReadKey();
-            Ship.Place(gridController.playerGrid, 2);
-            gridController.Display();
-            Console.ReadKey();
-            Ship.Place(gridController.playerGrid, 1);
-            
-            gridController.Display();
             Console.ReadKey();
         }
     }
