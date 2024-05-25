@@ -6,11 +6,11 @@ namespace MyApp
     {
         static void Main(string[] args)
         { 
-            Display display = new();
+            Grid gridController = new();
 
-            display.CreateGrid(display.playerGrid);
-            display.CreateGrid(display.opponentGrid); // Makes all the grids
-            display.CreateGrid(display.opponentGridHidden);
+            gridController.Create(gridController.playerGrid);
+            gridController.Create(gridController.opponentGrid); // Makes all the grids
+            gridController.Create(gridController.opponentGridHidden);
 
             Console.ReadKey();
         }
