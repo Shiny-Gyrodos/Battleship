@@ -5,7 +5,7 @@ abstract class Ship
     static int coord1 = rng.Next(0, 8);
     static int coord2 = rng.Next(0, 8);
     static List<int> verticalIncrements = [];
-    static List<int> horizontalIncrements = [];
+    static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
     static Node[] nodeTypeStorage = [new Node(false, false, 'O', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
     public static void Place(Node[,] chosenGrid, int shipSegments)
     {

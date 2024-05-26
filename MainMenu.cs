@@ -1,4 +1,4 @@
-class MainMenu
+abstract class MainMenu // Potentially change from abstract.
 {
     static string[] textStorage = ["Classic", "Advanced", "Chaos"];
 
@@ -17,13 +17,13 @@ class MainMenu
                 if (currentNumber == i)
                 {
                     textStorage[i].Insert(0, " > ");
-                    Console.WriteLine(textStorage[i]);
                 }
                 else
                 {
                     textStorage[i].Insert(0, "   ");
-                    Console.WriteLine(textStorage[i]);
                 }
+                
+                Console.WriteLine(textStorage[i]);
             }
 
             while (!validCharInput)
