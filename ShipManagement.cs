@@ -1,6 +1,6 @@
 abstract class Ship
 {
-    static Random rng = new(); // Remove as many static variables as possible.
+    static Random rng = new(); // Remove as many static variables as possible in the future.
     static bool shipPlaced;
     static int coord1 = rng.Next(0, 8);
     static int coord2 = rng.Next(0, 8);
@@ -41,11 +41,11 @@ abstract class Ship
                 }
                 else if (horizontalIncrements.Count == 0)
                 {
-                    isVertical = false;
+                    isVertical = true;
                 }
                 else if (verticalIncrements.Count == 0)
                 {
-                    isVertical = true;
+                    isVertical = false;
                 }
 
                 nodeValid = NodesValid(shipSegments, isVertical, chosenGrid);
@@ -144,6 +144,8 @@ abstract class Ship
         else
         {
             shipPlaced = false;
+            verticalIncrements.Clear();
+            horizontalIncrements.Clear();
             verticalIncrements.Add(1);
             verticalIncrements.Add(-1);
             horizontalIncrements.Add(1);
