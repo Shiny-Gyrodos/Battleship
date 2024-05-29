@@ -16,7 +16,7 @@ abstract class Ship
     static int coord2 = rng.Next(0, 8);
     static List<int> verticalIncrements = [];
     static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
-    static Node[] nodeTypeStorage = [new Node(false, false, 'O', 0), new Node(true, false, 'H', 1), new Node(true, false, 'H', 2), new Node(true, false, 'H', 3), new Node(true, false, 'H', 4), new Node(true, false, 'H', 5)];
+    static Node[] nodeTypeStorage = [new Node(false, 'O', 0), new Node(false, 'H', 1), new Node(false, 'H', 2), new Node(false, 'H', 3), new Node(false, 'H', 4), new Node(false, 'H', 5)];
     public static void Place(Node[,] chosenGrid, int shipSegments)
     {
         ReinitializeVariables(false);
@@ -31,7 +31,7 @@ abstract class Ship
                 ReinitializeVariables(false);
             }
 
-            if (chosenGrid[coord1, coord2].NodeFilled)
+            if (chosenGrid[coord1, coord2].ShipType != "No Ship" && !chosenGrid[coord1, coord2].IsMine)
             {
                 ReinitializeVariables(true);
             }
@@ -102,7 +102,7 @@ abstract class Ship
             for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[testCoord, coord2].ShipType != "No Ship" && !chosenGrid[testCoord, coord2].IsMine ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
@@ -125,7 +125,7 @@ abstract class Ship
             for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[coord1, testCoord].ShipType != "No Ship" && !chosenGrid[coord1, testCoord].IsMine ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 

@@ -16,11 +16,11 @@ abstract class MainMenu // Potentially change from abstract in the future.
             {
                 if (currentNumber == i)
                 {
-                    textStorage[i].Insert(0, " > ");
+                    textStorage[i] = textStorage[i].Insert(0, " > ");
                 }
                 else
                 {
-                    textStorage[i].Insert(0, "   ");
+                    textStorage[i] = textStorage[i].Insert(0, "   ");
                 }
                 
                 Console.WriteLine(textStorage[i]);

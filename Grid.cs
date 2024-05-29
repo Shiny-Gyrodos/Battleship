@@ -12,7 +12,7 @@ class Grid
         {
             for(int j = 0; j < 8; j++)
             {
-                chosenGrid[i, j] = new Node(false, false, 'O', 0);
+                chosenGrid[i, j] = new Node(false, 'O', 0);
             }
         }
     }
