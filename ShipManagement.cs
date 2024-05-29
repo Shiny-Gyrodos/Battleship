@@ -1,3 +1,13 @@
+/* General breakdown: 
+
+   This code chooses a random unfilled node in a chosen gird (e. chosenGrid), and
+   fills it with a ship node. Then a random coord is chosen to be modified (e. exampleGrid[coord1, coord2], either coord1 or coord2 will be modified,
+   the isVertical variable controls which). The program will then step out from the original node in the new direction (e. exampleGrid[coord1 + 1, coord2])
+   the ship's length - 1 amount of times; so the carrier (length of 5) would step out 4 times. The program counts how many valid spaces there are while
+   stepping out. If the amount of valid spaces (e. emptyNodeCount) == the ship's length - 1 (e. shipSegments), then the ship is placed.
+   If the program counts less valid spacs than required, the program changes back the orignal node modified/filled to empty then picks a new starting
+   location, then tries the whole process over again. */
+
 abstract class Ship
 {
     static Random rng = new(); // Remove as many static variables as possible in the future.

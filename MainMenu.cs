@@ -1,4 +1,4 @@
-abstract class MainMenu // Potentially change from abstract.
+abstract class MainMenu // Potentially change from abstract in the future.
 {
     static string[] textStorage = ["Classic", "Advanced", "Chaos"];
 

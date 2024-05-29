@@ -1,4 +1,4 @@
-class TurnOptions
+abstract class TurnOptions // Potentially change from abstract in the future.
 {
     static Random rng = new();
 
