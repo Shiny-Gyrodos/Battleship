@@ -2,13 +2,13 @@ abstract class MainMenu // Potentially change from abstract in the future.
 {
     static string[] textStorage = ["Classic", "Advanced", "Chaos"];
 
-    public void Enter() // In need of refactoring
+    public void Start() // In need of refactoring
     {
         char playerInput = ' ';
-        bool menuLeft = false;
+        bool menuExited = false;
         int currentNumber = 0;
 
-        while (!menuLeft)
+        while (!menuExited)
         {
             bool validCharInput = false;
 
@@ -41,7 +41,7 @@ abstract class MainMenu // Potentially change from abstract in the future.
                     currentNumber = currentNumber < textStorage.Length ? currentNumber + 1 : textStorage.Length;
                     break;
                 case ' ':
-                    menuLeft = true;
+                    menuExited = true;
                     break;
             }
         }

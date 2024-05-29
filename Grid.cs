@@ -22,7 +22,7 @@ class Grid
     public void Display()
     {
         Console.Clear();
-        Console.WriteLine("0 1 2 3 4 5 6 7\n-----------------");
+        Console.WriteLine("1 2 3 4 5 6 7 8\n-----------------");
 
         for(int i = 0; i < 8; i++)
         {
@@ -30,7 +30,8 @@ class Grid
             {
                 Console.Write($"{opponentGrid[i, j].Icon} ");
             }
-            Console.Write("| " + i);
+
+            Console.Write($"| {Convert.ToChar(i + 65)}");
             Console.WriteLine();
         }
 
@@ -42,7 +43,7 @@ class Grid
             {
                 Console.Write($"{playerGrid[i, j].Icon} ");
             }
-            Console.Write("| " + i);
+            Console.Write($"| {Convert.ToChar(i + 65)}");
             Console.WriteLine();
         }
     }

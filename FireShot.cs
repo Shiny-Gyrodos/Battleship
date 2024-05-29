@@ -1,4 +1,4 @@
-abstract class FireShot // Maybe change from abstract later
+class FireShot // Maybe change from abstract later
 {
     public static void Shoot(Node[,] chosenGrid, Grid grid, int coord1, int coord2) // Needs a lot of work. // <Maybe change from static later.
     {
