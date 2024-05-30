@@ -31,7 +31,7 @@ abstract class Ship
                 ReinitializeVariables(false);
             }
 
-            if (chosenGrid[coord1, coord2].ShipType != "No Ship" && !chosenGrid[coord1, coord2].IsMine)
+            if (chosenGrid[coord1, coord2].NodeFilled == true)
             {
                 ReinitializeVariables(true);
             }
@@ -102,7 +102,7 @@ abstract class Ship
             for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[testCoord, coord2].ShipType != "No Ship" && !chosenGrid[testCoord, coord2].IsMine ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
@@ -125,7 +125,7 @@ abstract class Ship
             for(int i = 0; i < (shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[coord1, testCoord].ShipType != "No Ship" && !chosenGrid[coord1, testCoord].IsMine ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
