@@ -1,7 +1,6 @@
 abstract class Abilities // Potentially change from abstract in the future.
 {
     static Random rng = new();
-
     public void MineDetonates(Node[,] chosenGrid, Grid grid)
     {
         List<Node[,]> possibleGrids = [grid.playerGrid, grid.opponentGridHidden];
@@ -16,10 +15,10 @@ abstract class Abilities // Potentially change from abstract in the future.
 
             Node nodeSelected = possibleGrids[0][coord1, coord2];
 
-            if (nodeSelected.Icon == 'H' || nodeSelected.Icon == 'O')
+            if (!nodeSelected.FiredAt)
             {
                 validNodesFound++;
-                FireShot.Shoot(chosenGrid, grid, coord1, coord2);
+                FireShot.Shoot(chosenGrid, coord1, coord2);
             }
         }
     }
