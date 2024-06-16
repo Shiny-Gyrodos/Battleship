@@ -2,7 +2,7 @@ abstract class MainMenu // Potentially change from abstract in the future.
 {
     static string[] textStorage = ["Classic", "Advanced", "Chaos"];
 
-    public void Start() // In need of refactoring
+    public static void Start() // In need of refactoring
     {
         char playerInput = ' ';
         bool menuExited = false;
@@ -48,11 +48,11 @@ abstract class MainMenu // Potentially change from abstract in the future.
 
         switch (currentNumber) // Unfinished
         {
-            case 0:
+            case 0: // Selected classic
                 break;
-            case 1:
+            case 1: // Selected advanced
                 break;
-            case 2:
+            case 2: // Selected chaos
                 break;
         }
     }

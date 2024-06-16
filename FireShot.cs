@@ -1,6 +1,6 @@
 abstract class FireShot // Maybe change from abstract later
 {
-    public static bool Shoot(Node[,] chosenGrid, int coord1, int coord2) // Make it a switch statement with conditional operators. 
+    public static bool Shoot(Node[,] chosenGrid, int coord1, int coord2)
     {
         if (!chosenGrid[coord1, coord2].FiredAt)
         {
@@ -21,12 +21,5 @@ abstract class FireShot // Maybe change from abstract later
         }
 
         return false; // If else
-    }
-
-
-
-    public static bool IsNodeValid(Node[,] chosenGrid, int coord1, int coord2) // Maybe change from static later.
-    {
-        return chosenGrid[coord1, coord2].Icon == 'X' || chosenGrid[coord1, coord2].Icon == '0' ? false : true;
     }
 }

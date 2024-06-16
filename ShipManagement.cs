@@ -60,7 +60,8 @@ abstract class Ship
                 nodeValid = NodesValid(ship, isVertical, chosenGrid);
             }
 
-            chosenGrid[coord1, coord2] = !nodeValid ? new Node(false, false, 'O', NodeTypes.other) : chosenGrid[coord1, coord2]; // If node wasn't valid it is set back to empty.
+            // If node wasn't valid it is set back to empty.
+            chosenGrid[coord1, coord2] = !nodeValid ? new Node(false, false, 'O', NodeTypes.other) : chosenGrid[coord1, coord2];
         }
     }
 

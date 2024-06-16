@@ -1,7 +1,7 @@
 abstract class Abilities // Potentially change from abstract in the future.
 {
     static Random rng = new();
-    public void MineDetonates(Node[,] chosenGrid, Grid grid)
+    public static void MineDetonates(Node[,] chosenGrid, Grid grid)
     {
         List<Node[,]> possibleGrids = [grid.playerGrid, grid.opponentGridHidden];
         possibleGrids.Remove(chosenGrid);
