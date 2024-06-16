@@ -16,8 +16,7 @@ abstract class Ship
     static int coord2 = rng.Next(0, 8);
     static List<int> verticalIncrements = [];
     static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
-    static Node[] nodeTypeStorage = [new Node(false, 'O', 0), new Node(true, 'H', 1), new Node(true, 'H', 2), new Node(true, 'H', 3), new Node(true, 'H', 4), new Node(true, 'H', 5)];
-    public static void Place(Node[,] chosenGrid, int shipSegments)
+    public static void Place(Node[,] chosenGrid, NodeTypes ship)
     {
         ReinitializeVariables(false);
         bool nodeValid = true;
@@ -37,7 +36,7 @@ abstract class Ship
             }
             else
             {
-                chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
+                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
                 startingNodeEmpty = true;
             }
 
@@ -58,28 +57,28 @@ abstract class Ship
                     isVertical = false;
                 }
 
-                nodeValid = NodesValid(shipSegments, isVertical, chosenGrid);
+                nodeValid = NodesValid(ship, isVertical, chosenGrid);
             }
 
-            chosenGrid[coord1, coord2] = !nodeValid ? nodeTypeStorage[0] : chosenGrid[coord1, coord2]; // If node wasn't valid it is set back to empty.
+            chosenGrid[coord1, coord2] = !nodeValid ? new Node(false, false, 'O', NodeTypes.other) : chosenGrid[coord1, coord2]; // If node wasn't valid it is set back to empty.
         }
     }
 
 
 
-    static void PlaceShipNodes(int shipSegments, int chosenIncrement, bool isVertical, Node[,] chosenGrid)
+    static void PlaceShipNodes(NodeTypes ship, int chosenIncrement, bool isVertical, Node[,] chosenGrid)
     {
-        for (int i = 0; i < shipSegments - 1; i++)
+        for (int i = 0; i < (int)ship - 1; i++)
         {
             if (isVertical)
             {
                 coord1 += chosenIncrement;
-                chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
+                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
             }
             else
             {
                 coord2 += chosenIncrement;
-                chosenGrid[coord1, coord2] = nodeTypeStorage[shipSegments];
+                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
             }
         }
 
@@ -90,7 +89,7 @@ abstract class Ship
 
 
 
-    static bool NodesValid(int shipSegments, bool isVertical, Node[,] chosenGrid)
+    static bool NodesValid(NodeTypes ship, bool isVertical, Node[,] chosenGrid)
     {
         int emptyNodeCount = 0;
 
@@ -99,16 +98,16 @@ abstract class Ship
             int testCoord = coord1;
             int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)]; // Threw an error
 
-            for(int i = 0; i < (shipSegments - 1); i++)
+            for(int i = 0; i < ((int)ship - 1); i++)
             {
                 testCoord += chosenIncrement;
                 try {emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
-            if (emptyNodeCount == shipSegments - 1)
+            if (emptyNodeCount == (int)ship - 1)
             {
-                PlaceShipNodes(shipSegments, chosenIncrement, isVertical, chosenGrid);
+                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid);
                 return true;
             }
             else
@@ -122,16 +121,16 @@ abstract class Ship
             int testCoord = coord2;
             int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)]; // Threw an error
 
-            for(int i = 0; i < (shipSegments - 1); i++)
+            for(int i = 0; i < ((int)ship - 1); i++)
             {
                 testCoord += chosenIncrement;
                 try {emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
-            if (emptyNodeCount == shipSegments - 1)
+            if (emptyNodeCount == (int)ship - 1)
             {
-                PlaceShipNodes(shipSegments, chosenIncrement, isVertical, chosenGrid);
+                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid);
                 return true;
             }
             else
@@ -171,7 +170,7 @@ abstract class Ship
     {
         for (int i = 1; i <= 5; i++)
         {
-            Place(chosenGrid, i);
+            Place(chosenGrid, (NodeTypes)i);
         }
     }
 }

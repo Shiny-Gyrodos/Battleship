@@ -1,8 +1,26 @@
-class FireShot // Maybe change from abstract later
+abstract class FireShot // Maybe change from abstract later
 {
-    public static void Shoot(Node[,] chosenGrid, Grid grid, int coord1, int coord2) // Maybe change from static later.
+    public static bool Shoot(Node[,] chosenGrid, int coord1, int coord2) // Make it a switch statement with conditional operators. 
     {
-        chosenGrid[coord1, coord2] = chosenGrid[coord1, coord2].NodeFilled == true ? new Node(true, 'X', 0) : new Node(true, '0', 0);
+        if (!chosenGrid[coord1, coord2].FiredAt)
+        {
+            switch (chosenGrid[coord1, coord2].NodeFilled)
+            {
+                case true: // If ship
+                    chosenGrid[coord1, coord2] = new Node(false, true, 'X', NodeTypes.other);
+                    break;
+                case false: // If empty
+                    chosenGrid[coord1, coord2] = new Node(false, true, '0', NodeTypes.other);
+                    break;
+                case null: // If mine
+                    chosenGrid[coord1, coord2] = new Node(false, true, '#', NodeTypes.other);
+                    break;
+            }
+
+            return true;
+        }
+
+        return false; // If else
     }
 
 

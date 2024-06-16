@@ -12,7 +12,7 @@ class Grid
         {
             for(int j = 0; j < 8; j++)
             {
-                chosenGrid[i, j] = new Node(false, 'O', 0);
+                chosenGrid[i, j] = new Node(false, false, 'O', 0);
             }
         }
     }
@@ -43,8 +43,8 @@ class Grid
             {
                 Console.Write($"{playerGrid[i, j].Icon} ");
             }
-            Console.Write($"| {Convert.ToChar(i + 65)}");
-            Console.WriteLine();
+            Console.Write($"| {Convert.ToChar(i + 65)}"); // Changes the character by adding a value to it. E. https://www.asciitable.com
+            Console.WriteLine(); 
         }
     }
 }
