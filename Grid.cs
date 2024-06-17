@@ -1,6 +1,5 @@
 class Grid
 {
-    public Node[,] opponentGridHidden = new Node[8, 8];
     public Node[,] opponentGrid = new Node[8, 8];
     public Node[,] playerGrid = new Node[8, 8];
 

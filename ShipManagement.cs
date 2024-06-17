@@ -16,7 +16,7 @@ abstract class Ship
     static int coord2 = rng.Next(0, 8);
     static List<int> verticalIncrements = [];
     static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
-    public static void Place(Node[,] chosenGrid, NodeTypes ship)
+    public static void Place(Node[,] chosenGrid, NodeTypes ship, bool isPlayerGrid)
     {
         ReinitializeVariables(false);
         bool nodeValid = true;
@@ -36,7 +36,7 @@ abstract class Ship
             }
             else
             {
-                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
+                chosenGrid[coord1, coord2] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
                 startingNodeEmpty = true;
             }
 
@@ -57,7 +57,7 @@ abstract class Ship
                     isVertical = false;
                 }
 
-                nodeValid = NodesValid(ship, isVertical, chosenGrid);
+                nodeValid = NodesValid(ship, isVertical, chosenGrid, isPlayerGrid);
             }
 
             // If node wasn't valid it is set back to empty.
@@ -67,20 +67,20 @@ abstract class Ship
 
 
 
-    static void PlaceShipNodes(NodeTypes ship, int chosenIncrement, bool isVertical, Node[,] chosenGrid)
+    static void PlaceShipNodes(NodeTypes ship, int chosenIncrement, bool isVertical, Node[,] chosenGrid, bool isPlayerGrid)
     {
         for (int i = 0; i < (int)ship - 1; i++)
         {
             if (isVertical)
             {
                 coord1 += chosenIncrement;
-                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
             }
             else
             {
                 coord2 += chosenIncrement;
-                chosenGrid[coord1, coord2] = new Node(true, false, 'H', ship);
             }
+
+            chosenGrid[coord1, coord2] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
         }
 
         verticalIncrements.Clear();
@@ -90,7 +90,7 @@ abstract class Ship
 
 
 
-    static bool NodesValid(NodeTypes ship, bool isVertical, Node[,] chosenGrid)
+    static bool NodesValid(NodeTypes ship, bool isVertical, Node[,] chosenGrid, bool isPlayerGrid)
     {
         int emptyNodeCount = 0;
 
@@ -108,7 +108,7 @@ abstract class Ship
 
             if (emptyNodeCount == (int)ship - 1)
             {
-                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid);
+                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
                 return true;
             }
             else
@@ -131,7 +131,7 @@ abstract class Ship
 
             if (emptyNodeCount == (int)ship - 1)
             {
-                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid);
+                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
                 return true;
             }
             else
@@ -167,11 +167,11 @@ abstract class Ship
 
 
 
-    public static void PlaceAll(Node[,] chosenGrid)
+    public static void PlaceAll(Node[,] chosenGrid, bool isPlayerGrid)
     {
         for (int i = 1; i <= 5; i++)
         {
-            Place(chosenGrid, (NodeTypes)i);
+            Place(chosenGrid, (NodeTypes)i, isPlayerGrid);
         }
     }
 }
