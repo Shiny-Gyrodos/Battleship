@@ -21,7 +21,7 @@ class Grid
     public void Display()
     {
         Console.Clear();
-        Console.WriteLine("1 2 3 4 5 6 7 8\n-----------------");
+        Console.WriteLine("A B C D E F G H\n-----------------");
 
         for(int i = 0; i < 8; i++)
         {
@@ -30,7 +30,7 @@ class Grid
                 Console.Write($"{opponentGrid[i, j].Icon} ");
             }
 
-            Console.Write($"| {Convert.ToChar(i + 65)}");
+            Console.Write($"| {i + 1}");
             Console.WriteLine();
         }
 
@@ -42,7 +42,7 @@ class Grid
             {
                 Console.Write($"{playerGrid[i, j].Icon} ");
             }
-            Console.Write($"| {Convert.ToChar(i + 65)}"); // Changes the character by adding a value to it. E. https://www.asciitable.com
+            Console.Write($"| {i + 1}");
             Console.WriteLine(); 
         }
     }
