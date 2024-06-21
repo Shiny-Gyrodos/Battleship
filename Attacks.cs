@@ -35,22 +35,31 @@ abstract class Attacks // Potentially change from abstract in the future.
         while (!validInputRecieved)
         {
             Console.WriteLine("\nInput the key of the column or row you wish to strip bomb.");
+            char playerInput = Console.ReadKey().KeyChar;
 
-            try
+            // 49-56 are the char values of numbers 1-8. 65-72 are the char values of A-H.
+            if (playerInput >= 49 && playerInput <= 56)
             {
-                char playerInput = Console.ReadKey().KeyChar;
+                // Bombing a row,
+                for (int i = 0; i < 8; i++)
+                {
+                    // Subtracting 48 brings the char value down to 0-7
+                    Shoot(chosenGrid, i, playerInput - 48);
+                }
 
-                // 49-56 are the char values of numbers 1-8. 65-72 are the char values of A-H.
-                if (playerInput >= 49 && playerInput <= 56)
-                {
-                    // Bombing a row, playerInput - 1, perform int cast
-                }
-                else if (playerInput >= 65 && playerInput <= 72)
-                {
-                    // Bombing a column, playerInput - 65, subtract 65 and work with the number from there
-                }
+                validInputRecieved = true;
             }
-            catch {} // Add the error code later.
+            else if (playerInput >= 65 && playerInput <= 72)
+            {
+                // Bombing a column
+                for (int i = 0; i < 8; i++)
+                {
+                    // Subtracting 65 brings the char value down to 0-7
+                    Shoot(chosenGrid, playerInput - 65, i);
+                }
+
+                validInputRecieved = true;
+            }
         }
     }
 
