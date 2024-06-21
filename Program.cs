@@ -6,6 +6,7 @@ namespace MyApp
     {
         static void Main(string[] args)
         { 
+            MainMenu.Start();
             Grid gridController = new();
 
             gridController.Create(gridController.playerGrid);

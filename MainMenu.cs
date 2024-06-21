@@ -12,20 +12,21 @@ abstract class MainMenu // Potentially change from abstract in the future.
         {
             bool validCharInput = false;
 
+            Console.Clear();
             Console.WriteLine("Use the 'w' and 'a' keys to navigate up and down. Use the 'space' key to select a game mode.");
 
             for (int i = 0; i < textStorage.Length; i++)
             {
                 if (currentNumber == i)
                 {
-                    textStorage[0][i] = textStorage[2][i]; // Jagged array solution hasn't been tested.
+                    textStorage[0][i] = textStorage[2][i];
                 }
                 else
                 {
-                    textStorage[0][i] = textStorage[1][i]; // Jagged array solution hasn't been tested. 
+                    textStorage[0][i] = textStorage[1][i];
                 }
                 
-                Console.WriteLine(textStorage[0][i]); // Jagged array solution hasn't been tested.
+                Console.WriteLine(textStorage[0][i]);
             }
 
             while (!validCharInput)
@@ -40,7 +41,7 @@ abstract class MainMenu // Potentially change from abstract in the future.
                     currentNumber = currentNumber > 0 ? currentNumber - 1 : 0;
                     break;
                 case 's':
-                    currentNumber = currentNumber < textStorage.Length ? currentNumber + 1 : textStorage.Length;
+                    currentNumber = currentNumber < textStorage[0].Length - 1 ? currentNumber + 1 : textStorage[0].Length - 1;
                     break;
                 case ' ':
                     menuExited = true;
