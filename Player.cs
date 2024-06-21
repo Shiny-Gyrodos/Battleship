@@ -1,4 +1,4 @@
-class Player : FireShot
+class Player : Attacks
 {
     public static void Turn()
     {

@@ -1,4 +1,4 @@
-class Opponent : FireShot
+class Opponent : Attacks
 {
     public static void Turn()
     {
