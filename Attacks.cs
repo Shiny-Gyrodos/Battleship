@@ -28,7 +28,27 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void StripBomb(Node[,] chosenGrid)
+    public static void AtomBomb(Node[,] chosenGrid, int coord1, int coord2) // Shoots at a 3x3 area around the specified coords.
+    {
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                try 
+                { 
+                    if (chosenGrid[coord1 + i, coord2 + j].NodeFilled != false)
+                    {
+                        Shoot(chosenGrid, coord1, coord2);
+                    }
+                }
+                catch (IndexOutOfRangeException) { }
+            }
+        }
+    }
+
+
+
+    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column.
     {
         bool validInputRecieved = false;
 
