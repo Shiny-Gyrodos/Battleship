@@ -90,7 +90,7 @@ abstract class Ship
 
 
 
-    static bool NodesValid(NodeTypes ship, bool isVertical, Node[,] chosenGrid, bool isPlayerGrid)
+    static bool NodesValid(NodeTypes shipSegments, bool isVertical, Node[,] chosenGrid, bool isPlayerGrid)
     {
         int emptyNodeCount = 0;
 
@@ -99,16 +99,16 @@ abstract class Ship
             int testCoord = coord1;
             int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)]; // Threw an error
 
-            for(int i = 0; i < ((int)ship - 1); i++)
+            for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
                 try {emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
-            if (emptyNodeCount == (int)ship - 1)
+            if (emptyNodeCount == (int)shipSegments - 1)
             {
-                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
+                PlaceShipNodes(shipSegments, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
                 return true;
             }
             else
@@ -122,16 +122,16 @@ abstract class Ship
             int testCoord = coord2;
             int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)]; // Threw an error
 
-            for(int i = 0; i < ((int)ship - 1); i++)
+            for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
                 try {emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
-            if (emptyNodeCount == (int)ship - 1)
+            if (emptyNodeCount == (int)shipSegments - 1)
             {
-                PlaceShipNodes(ship, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
+                PlaceShipNodes(shipSegments, chosenIncrement, isVertical, chosenGrid, isPlayerGrid);
                 return true;
             }
             else
