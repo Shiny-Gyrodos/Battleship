@@ -48,7 +48,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column.
+    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column. 
     {
         bool validInputRecieved = false;
 
