@@ -12,8 +12,7 @@ abstract class Ship
 {
     static Random rng = new(); // Remove as many static variables as possible in the future.
     static bool shipPlaced;
-    static int coord1 = rng.Next(0, 8);
-    static int coord2 = rng.Next(0, 8);
+    static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
     static List<int> verticalIncrements = [];
     static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
     public static void Place(Node[,] chosenGrid, NodeTypes ship, bool isPlayerGrid)
@@ -30,13 +29,13 @@ abstract class Ship
                 ReinitializeVariables(false);
             }
 
-            if (chosenGrid[coord1, coord2].NodeFilled == true)
+            if (chosenGrid[coords.vertical, coords.horizontal].NodeFilled == true)
             {
                 ReinitializeVariables(true);
             }
             else
             {
-                chosenGrid[coord1, coord2] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
+                chosenGrid[coords.vertical, coords.horizontal] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
                 startingNodeEmpty = true;
             }
 
@@ -61,7 +60,7 @@ abstract class Ship
             }
 
             // If node wasn't valid it is set back to empty.
-            chosenGrid[coord1, coord2] = !nodeValid ? new Node(false, false, 'O', NodeTypes.other) : chosenGrid[coord1, coord2];
+            chosenGrid[coords.vertical, coords.horizontal] = !nodeValid ? new Node(false, false, 'O', NodeTypes.other) : chosenGrid[coords.vertical, coords.horizontal];
         }
     }
 
@@ -73,14 +72,14 @@ abstract class Ship
         {
             if (isVertical)
             {
-                coord1 += chosenIncrement;
+                coords.vertical += chosenIncrement;
             }
             else
             {
-                coord2 += chosenIncrement;
+                coords.horizontal += chosenIncrement;
             }
 
-            chosenGrid[coord1, coord2] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
+            chosenGrid[coords.vertical, coords.horizontal] = isPlayerGrid ? new Node(true, false, 'H', ship) : new Node(true, false, 'O', ship);
         }
 
         verticalIncrements.Clear();
@@ -96,13 +95,13 @@ abstract class Ship
 
         if (isVertical)
         {
-            int testCoord = coord1;
+            int testCoord = coords.vertical;
             int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)]; // Threw an error
 
             for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[testCoord, coord2].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[testCoord, coords.horizontal].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
@@ -119,13 +118,13 @@ abstract class Ship
         }
         else
         {
-            int testCoord = coord2;
+            int testCoord = coords.horizontal;
             int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)]; // Threw an error
 
             for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
                 testCoord += chosenIncrement;
-                try {emptyNodeCount = chosenGrid[coord1, testCoord].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
+                try {emptyNodeCount = chosenGrid[coords.vertical, testCoord].NodeFilled == true ? emptyNodeCount : emptyNodeCount + 1;}
                 catch (IndexOutOfRangeException) {} // Try/catch blocks remove the need for extra calculations.
             }
 
@@ -148,8 +147,8 @@ abstract class Ship
     {
         if (randomizeCoords)
         {
-            coord1 = rng.Next(0, 8);
-            coord2 = rng.Next(0, 8);
+            coords.vertical = rng.Next(0, 8);
+            coords.horizontal = rng.Next(0, 8);
         }
         else
         {
@@ -160,8 +159,8 @@ abstract class Ship
             verticalIncrements.Add(-1);
             horizontalIncrements.Add(1);
             horizontalIncrements.Add(-1);
-            coord1 = rng.Next(0, 8);
-            coord2 = rng.Next(0, 8);
+            coords.vertical = rng.Next(0, 8);
+            coords.horizontal = rng.Next(0, 8);
         }
     }
 

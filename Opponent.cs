@@ -1,8 +1,7 @@
 class Opponent : Attacks
 {
     static Random rng = new();
-    static int coord1 = rng.Next(0, 8);
-    static int coord2 = rng.Next(0, 8);
+    static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
     static int decisionNum = 0;
     public static void Turn()
     {
@@ -21,7 +20,7 @@ class Opponent : Attacks
 
 
 
-    static void FindingShipPosition(Grid grids, int coord1, int coord2) // This method is for when one segment of a ship has been found. It is looking for the ship's orientation.
+    static void FindingShipPosition(Grid grids, (int vertical, int horizontal) coords) // This method is for when one segment of a ship has been found. It is looking for the ship's orientation.
     {
         List<int> possibleOffsets = [1, -1, 1, -1];
 
@@ -31,13 +30,13 @@ class Opponent : Attacks
             {
                 try
                 {
-                    if (grids.playerGrid[coord1 + possibleOffsets[i], coord2].FiredAt) // Could maybe use the return value of shoot method to do this.
+                    if (grids.playerGrid[coords.vertical + possibleOffsets[i], coords.horizontal].FiredAt) // Could maybe use the return value of shoot method to do this.
                     {
                         possibleOffsets.Remove(possibleOffsets[i]);
                     }
                     else
                     {
-                        Shoot(grids.playerGrid, coord1, coord2);
+                        Shoot(grids.playerGrid, coords);
                     }
                 }
                 catch (IndexOutOfRangeException)
@@ -49,13 +48,13 @@ class Opponent : Attacks
             {
                 try
                 {
-                    if (grids.playerGrid[coord1, coord2 + possibleOffsets[i]].FiredAt) // Could maybe use the return value of shoot method to do this.
+                    if (grids.playerGrid[coords.vertical, coords.horizontal + possibleOffsets[i]].FiredAt) // Could maybe use the return value of shoot method to do this.
                     {
                         possibleOffsets.Remove(possibleOffsets[i]);
                     }
                     else
                     {
-                        Shoot(grids.playerGrid, coord1, coord2);
+                        Shoot(grids.playerGrid, coords);
                     }
                 }
                 catch (IndexOutOfRangeException)
@@ -70,8 +69,8 @@ class Opponent : Attacks
 
     static void AcquireCoords()
     {
-        coord1 = rng.Next(0, 8);
-        coord2 = rng.Next(0, 8);
+        coords.vertical = rng.Next(0, 8);
+        coords.horizontal = rng.Next(0, 8);
     }
 
 
@@ -83,7 +82,7 @@ class Opponent : Attacks
         while (!validNodeFound)
         {
             AcquireCoords();
-            validNodeFound = Shoot(chosenGrid, coord1, coord2);
+            validNodeFound = Shoot(chosenGrid, coords);
         }
     }
 }
