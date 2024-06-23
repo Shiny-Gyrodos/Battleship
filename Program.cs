@@ -7,19 +7,19 @@ namespace MyApp
         static void Main(string[] args)
         { 
             MainMenu.Start();
-            Grid gridController = new();
+            Grid grids = new();
 
-            gridController.Create(gridController.playerGrid);
-            gridController.Create(gridController.opponentGrid); // Makes all the grids
+            grids.Create(grids.playerGrid);
+            grids.Create(grids.opponentGrid); // Makes all the grids
 
-            gridController.Display();
+            grids.Display();
             Console.Write("\nTest : Press any key to randomly place ships.");
             Console.ReadKey();
 
-            Ship.PlaceAll(gridController.playerGrid, true);
-            Ship.PlaceAll(gridController.opponentGrid, false);
+            Ship.PlaceAll(grids.playerGrid, true);
+            Ship.PlaceAll(grids.opponentGrid, false);
 
-            gridController.Display();
+            grids.Display();
 
             Console.ReadKey();
         }
