@@ -22,44 +22,23 @@ class Opponent : Attacks
 
     static void FindingShipPosition(Grid grids, (int vertical, int horizontal) coords) // This method is for when one segment of a ship has been found. It is looking for the ship's orientation.
     {
-        List<int> possibleOffsets = [1, -1, 1, -1];
+        (List<int> vertical, List<int> horizontal) increments = ([1, -1], [1, -1]);
+        bool firstCheckVertical = rng.Next(1, 3) > 1.5;
 
-        for (int i = 0; i < possibleOffsets.Count; i++)
+        for (int i = 0; i < increments.vertical.Count + increments.horizontal.Count; i++)
         {
-            if (i < 2) // First checking vertical offsets. Added randomization would be a good idea.
+            if (i < 2 && firstCheckVertical) // First checking vertical offsets. Added randomization would be a good idea.
             {
-                try
+                if (!Shoot(grids.playerGrid, (coords.vertical + increments.vertical[i], coords.horizontal)))
                 {
-                    if (grids.playerGrid[coords.vertical + possibleOffsets[i], coords.horizontal].FiredAt) // Could maybe use the return value of shoot method to do this.
-                    {
-                        possibleOffsets.Remove(possibleOffsets[i]);
-                    }
-                    else
-                    {
-                        Shoot(grids.playerGrid, coords);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    possibleOffsets.Remove(possibleOffsets[i]);
+                    increments.vertical.Remove(i);
                 }
             }
             else // Secondly checking horizontal offsets.
             {
-                try
+                if (!Shoot(grids.playerGrid, (coords.vertical, coords.horizontal + increments.horizontal[i - 2])))
                 {
-                    if (grids.playerGrid[coords.vertical, coords.horizontal + possibleOffsets[i]].FiredAt) // Could maybe use the return value of shoot method to do this.
-                    {
-                        possibleOffsets.Remove(possibleOffsets[i]);
-                    }
-                    else
-                    {
-                        Shoot(grids.playerGrid, coords);
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    possibleOffsets.Remove(possibleOffsets[i]);
+                    increments.horizontal.Remove(i);
                 }
             }
         }
