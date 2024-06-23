@@ -2,25 +2,32 @@ abstract class Attacks // Potentially change from abstract in the future.
 {
     static Random rng = new();
 
-    public static bool Shoot(Node[,] chosenGrid, int coord1, int coord2)
+    public static bool Shoot(Node[,] chosenGrid, (int vertical, int horizontal) coords)
     {
-        if (!chosenGrid[coord1, coord2].FiredAt)
+        try 
         {
-            switch (chosenGrid[coord1, coord2].NodeFilled)
+            if (!chosenGrid[coords.vertical, coords.horizontal].FiredAt)
             {
-                case true: // If ship
-                    chosenGrid[coord1, coord2] = new Node(false, true, 'X', NodeTypes.other);
-                    break;
-                case false: // If empty
-                    chosenGrid[coord1, coord2] = new Node(false, true, '0', NodeTypes.other);
-                    break;
-                case null: // If mine
-                    chosenGrid[coord1, coord2] = new Node(false, true, '#', NodeTypes.other);
-                    MineDetonates(chosenGrid);
-                    break;
-            }
+                switch (chosenGrid[coords.vertical, coords.horizontal].NodeFilled)
+                {
+                    case true: // If ship
+                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, 'X', NodeTypes.other);
+                        break;
+                    case false: // If empty
+                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, '0', NodeTypes.other);
+                        break;
+                    case null: // If mine
+                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, '#', NodeTypes.other);
+                        MineDetonates(chosenGrid);
+                        break;
+                }
 
-            return true;
+                return true;
+            }
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return false;
         }
 
         return false; // If else
@@ -28,7 +35,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void AtomBomb(Node[,] chosenGrid, int coord1, int coord2) // Shoots at a 3x3 area around the specified coords.
+    public static void AtomBomb(Node[,] chosenGrid, (int vertical, int horizontal) coords) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -36,9 +43,9 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coord1 + i, coord2 + j].NodeFilled != false)
+                    if (chosenGrid[coords.vertical + i, coords.horizontal + j].NodeFilled != false)
                     {
-                        Shoot(chosenGrid, coord1, coord2);
+                        Shoot(chosenGrid, coords);
                     }
                 }
                 catch (IndexOutOfRangeException) { }
@@ -64,7 +71,7 @@ abstract class Attacks // Potentially change from abstract in the future.
                 for (int i = 0; i < 8; i++)
                 {
                     // Subtracting 48 brings the char value down to 0-7
-                    Shoot(chosenGrid, i, playerInput - 48);
+                    Shoot(chosenGrid, (i, playerInput - 48));
                 }
 
                 validInputRecieved = true;
@@ -75,7 +82,7 @@ abstract class Attacks // Potentially change from abstract in the future.
                 for (int i = 0; i < 8; i++)
                 {
                     // Subtracting 65 brings the char value down to 0-7
-                    Shoot(chosenGrid, playerInput - 65, i);
+                    Shoot(chosenGrid, (playerInput - 65, i));
                 }
 
                 validInputRecieved = true;
@@ -123,11 +130,10 @@ abstract class Attacks // Potentially change from abstract in the future.
     {
         for (int validNodesFound = 0; validNodesFound < 2; )
         {
-            int coord1 = rng.Next(0, 8);
-            int coord2 = rng.Next(0, 8);
+            (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
 
             // Shoot returns a boolean that determines whether it shot successfully at the spot specified or not.
-            validNodesFound = Shoot(chosenGrid, coord1, coord2) ? validNodesFound + 1 : validNodesFound;
+            validNodesFound = Shoot(chosenGrid, coords) ? validNodesFound + 1 : validNodesFound;
         }
     }
 }
