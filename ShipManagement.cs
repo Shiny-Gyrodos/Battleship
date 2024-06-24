@@ -96,7 +96,7 @@ abstract class Ship
         if (isVertical)
         {
             int testCoord = coords.vertical;
-            int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)]; // Threw an error
+            int chosenIncrement = verticalIncrements[rng.Next(0, verticalIncrements.Count)];
 
             for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
@@ -119,7 +119,7 @@ abstract class Ship
         else
         {
             int testCoord = coords.horizontal;
-            int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)]; // Threw an error
+            int chosenIncrement = horizontalIncrements[rng.Next(0, horizontalIncrements.Count)];
 
             for(int i = 0; i < ((int)shipSegments - 1); i++)
             {
