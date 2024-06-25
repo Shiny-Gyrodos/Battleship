@@ -1,5 +1,10 @@
+using System.Diagnostics;
+using System.Linq.Expressions;
+
 class Opponent : Attacks
 {
+    // Consider looking into adding a struct.
+    static List<(int, int)> coordPairs = [];
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
     public static void Turn()
@@ -8,9 +13,23 @@ class Opponent : Attacks
     }
 
 
+
+    static void FinishingOffShip(Grid grids)
+    {
+        if (coordPairs[0].Item1 == coordPairs[1].Item1)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+
     // This method is for when one segment of a ship has been found. 
     // It is searching for the ship's orientation.
-    static (string, int) FindShipPosition(Grid grids, (int vertical, int horizontal) coords)
+    static bool FindShipPosition(Grid grids, (int vertical, int horizontal) coords)
     {
         (List<int> vertical, List<int> horizontal) = ([1, -1], [1, -1]);
 
@@ -22,26 +41,26 @@ class Opponent : Attacks
             {
                 int randomIncrement = vertical[rng.Next(0, vertical.Count)];
 
-                if (!Shoot(grids.playerGrid, (coords.vertical + vertical[randomIncrement], coords.horizontal))) 
+                if (Shoot(grids.playerGrid, (coords.vertical + vertical[randomIncrement], coords.horizontal))) 
                 {     
-                    vertical.Remove(randomIncrement); 
+                    return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
                 }
                 else
                 {
-                    return ("vertical", randomIncrement);
+                    vertical.Remove(randomIncrement); 
                 }
             }
             else if (!firstCheckVertical && horizontal.Count > 0)
             {
                 int randomIncrement = horizontal[rng.Next(0, horizontal.Count)];
 
-                if (!Shoot(grids.playerGrid, (coords.vertical, coords.horizontal + horizontal[randomIncrement])))
+                if (Shoot(grids.playerGrid, (coords.vertical, coords.horizontal + horizontal[randomIncrement])))
                 {
-                    horizontal.Remove(randomIncrement);
+                    return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
                 }
                 else
                 {
-                    return ("horizontal", randomIncrement);
+                    vertical.Remove(randomIncrement); 
                 }
             }
         }
@@ -50,18 +69,19 @@ class Opponent : Attacks
 
 
     // Searching for ships by randomly firing.
-    static void HuntForShipSegments(Node[,] chosenGrid) // Searches randomly for ships.
+    static bool HuntForShipSegments(Grid grids, (int vertical, int horizontal) coords) // Searches randomly for ships.
     {
-        while (!Shoot(chosenGrid, coords))
+        while (true)
         {
-            AcquireCoords();
+            if (Shoot(grids.playerGrid, coords))
+            {
+
+                return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
+            }
+            else
+            {
+                (coords.vertical, coords.horizontal) = (rng.Next(0, 8), rng.Next(0, 8));
+            }
         }
-    }
-
-
-
-    static void AcquireCoords()
-    {
-        (coords.vertical, coords.horizontal) = (rng.Next(0, 8), rng.Next(0, 8));
     }
 }
