@@ -6,7 +6,6 @@ namespace MyApp
     {
         static void Main(string[] args)
         { 
-            MainMenu.Start();
             Grid grids = new();
 
             grids.Create(grids.playerGrid);

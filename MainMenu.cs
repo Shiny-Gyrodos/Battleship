@@ -1,3 +1,4 @@
+// This feature has been shelved in order to reach the deadline by the desired date (7/01/24).
 abstract class MainMenu // Potentially change from abstract in the future.
 {
     // First ([0]) array inside jagged is for the words printed, second ([1]) is for not hovered variants, and the third ([2]) is for hovered variants.
