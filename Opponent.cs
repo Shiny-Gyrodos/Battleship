@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 class Opponent : Attacks
 {
-    // Consider looking into adding a struct.
+    // Consider looking into adding a constructor class.
     static List<(int, int)> coordPairs = [];
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
@@ -75,7 +75,6 @@ class Opponent : Attacks
         {
             if (Shoot(grids.playerGrid, coords))
             {
-
                 return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
             }
             else
