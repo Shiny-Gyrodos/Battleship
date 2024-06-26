@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 class Opponent : Attacks
 {
     // Consider looking into adding a constructor class.
+    // Consider adding a list named something like "queuedCoordPairs" that stores coord pairs that need the surrounding area checked.
     static List<(int, int)> coordPairs = [];
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
@@ -38,7 +39,7 @@ class Opponent : Attacks
 
 
 
-    static int FetchModifiedCoord(int coord1, int coord2) // Sloppily done, there is most likely a much better way of accomplishing this.
+    static int FetchModifiedCoord(int coord1, int coord2) // Will eventually return a number 1 greater or lower than the two numbers fed in.
     {
         int modifiedCoord = coord1;
 
