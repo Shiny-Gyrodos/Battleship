@@ -7,23 +7,48 @@ class Opponent : Attacks
     static List<(int, int)> coordPairs = [];
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
+    static int emptyLocationsFound = 0;
     public static void Turn()
     {
         
     }
 
 
-
-    static void FinishingOffShip(Grid grids)
+    // This method is used when the ships's orientation has been found.
+    static void FinishingOffShip(Grid grids) // Haven't yet accounted for when the first two coord pairs acquired belong to different ships.
     {
-        if (coordPairs[0].Item1 == coordPairs[1].Item1)
-        {
+        bool validNodeFiredAt = false;
 
-        }
-        else
+        while (!validNodeFiredAt && emptyLocationsFound < 2)
         {
-
+            if (coordPairs[0].Item1 == coordPairs[1].Item1)
+            {
+                (int same, int modified) acquiredCoords = (coordPairs[0].Item1, FetchModifiedCoord(coordPairs[0].Item2, coordPairs[1].Item2));
+                validNodeFiredAt = Shoot(grids.playerGrid, acquiredCoords);
+                emptyLocationsFound = grids.playerGrid[acquiredCoords.same, acquiredCoords.modified].NodeFilled == true ? emptyLocationsFound : emptyLocationsFound + 1;
+            }
+            else
+            {
+                (int modified, int same) acquiredCoords = (FetchModifiedCoord(coordPairs[0].Item1, coordPairs[1].Item1), coordPairs[0].Item2);
+                validNodeFiredAt = Shoot(grids.playerGrid, acquiredCoords);
+                emptyLocationsFound = grids.playerGrid[acquiredCoords.modified, acquiredCoords.same].NodeFilled == true ? emptyLocationsFound : emptyLocationsFound + 1;
+            }
         }
+    }
+
+
+
+    static int FetchModifiedCoord(int coord1, int coord2) // Sloppily done, there is most likely a much better way of accomplishing this.
+    {
+        int modifiedCoord = coord1;
+
+        while (modifiedCoord == coord1 || modifiedCoord == coord2)
+        {
+            modifiedCoord += rng.Next(0, 2);
+            modifiedCoord -= rng.Next(0, 2);
+        }
+
+        return modifiedCoord;
     }
 
 
@@ -31,37 +56,33 @@ class Opponent : Attacks
     // It is searching for the ship's orientation.
     static bool FindShipPosition(Grid grids, (int vertical, int horizontal) coords)
     {
-        (List<int> vertical, List<int> horizontal) = ([1, -1], [1, -1]);
+        (List<int> vertical, List<int> horizontal) increments = ([1, -1], [1, -1]);
 
         while (true) // True since there is gauranteed to be a second ship segments if this method is called.
         {
             bool firstCheckVertical = rng.Next(1, 3) > 1.5;
 
-            if (firstCheckVertical && vertical.Count > 0)
+            if (firstCheckVertical && increments.vertical.Count > 0)
             {
-                int randomIncrement = vertical[rng.Next(0, vertical.Count)];
+                int randomIncrement = increments.vertical[rng.Next(0, increments.vertical.Count)];
 
-                if (Shoot(grids.playerGrid, (coords.vertical + vertical[randomIncrement], coords.horizontal))) 
+                if (Shoot(grids.playerGrid, (coords.vertical + increments.vertical[randomIncrement], coords.horizontal))) 
                 {     
                     return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
                 }
-                else
-                {
-                    vertical.Remove(randomIncrement); 
-                }
+                
+                increments.vertical.Remove(randomIncrement); 
             }
-            else if (!firstCheckVertical && horizontal.Count > 0)
+            else if (!firstCheckVertical && increments.horizontal.Count > 0)
             {
-                int randomIncrement = horizontal[rng.Next(0, horizontal.Count)];
+                int randomIncrement = increments.horizontal[rng.Next(0, increments.horizontal.Count)];
 
-                if (Shoot(grids.playerGrid, (coords.vertical, coords.horizontal + horizontal[randomIncrement])))
+                if (Shoot(grids.playerGrid, (coords.vertical, coords.horizontal + increments.horizontal[randomIncrement])))
                 {
                     return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
                 }
-                else
-                {
-                    vertical.Remove(randomIncrement); 
-                }
+                
+                increments.horizontal.Remove(randomIncrement); 
             }
         }
     }
@@ -77,10 +98,8 @@ class Opponent : Attacks
             {
                 return grids.playerGrid[coords.vertical, coords.horizontal].NodeFilled == true;
             }
-            else
-            {
-                (coords.vertical, coords.horizontal) = (rng.Next(0, 8), rng.Next(0, 8));
-            }
+               
+            (coords.vertical, coords.horizontal) = (rng.Next(0, 8), rng.Next(0, 8));
         }
     }
 }
