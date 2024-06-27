@@ -11,13 +11,13 @@ abstract class Attacks // Potentially change from abstract in the future.
                 switch (chosenGrid[coords.vertical, coords.horizontal].NodeFilled)
                 {
                     case true: // If ship
-                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, 'X', NodeTypes.other);
+                        chosenGrid[coords.vertical, coords.horizontal] = new Node(true, true, 'X', NodeTypes.other);
                         break;
                     case false: // If empty
                         chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, '0', NodeTypes.other);
                         break;
                     case null: // If mine
-                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, '#', NodeTypes.other);
+                        chosenGrid[coords.vertical, coords.horizontal] = new Node(null, true, '#', NodeTypes.other);
                         MineDetonates(chosenGrid);
                         break;
                 }
