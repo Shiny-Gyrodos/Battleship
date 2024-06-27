@@ -6,9 +6,10 @@ class Opponent : Attacks
     // Consider looking into adding a constructor class.
     // Consider adding a list named something like "queuedCoordPairs" that stores coord pairs that need the surrounding area checked.
     static List<(int, int)> coordPairs = [];
+    static List<(int, int)>[] coordSearchQueue = [[], []]; // The first list is for positively modified coords while the second is for negatively.
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
-    static int emptyLocationsFound = 0;
+    static int emptyNodesFiredAt = 0;
     public static void Turn()
     {
         
@@ -16,47 +17,51 @@ class Opponent : Attacks
 
 
     // This method is used when the ships's orientation has been found.
-    static void FinishingOffShip(Grid grids) // Haven't yet accounted for when the first two coord pairs acquired belong to different ships.
+    static void FinishingOffShip(Grid grids, bool checkList1) // Haven't yet accounted for when the first two coord pairs acquired belong to different ships.
     {
         bool validNodeFiredAt = false;
+        int checkList = checkList1 ? 0 : 1;
 
-        while (!validNodeFiredAt && emptyLocationsFound < 2)
-        {
-            if (coordPairs[0].Item1 == coordPairs[1].Item1)
-            {
-                (int same, int modified) acquiredCoords = (coordPairs[0].Item1, FetchModifiedCoord(coordPairs[0].Item2, coordPairs[1].Item2));
-                validNodeFiredAt = Shoot(grids.playerGrid, acquiredCoords);
-                emptyLocationsFound = grids.playerGrid[acquiredCoords.same, acquiredCoords.modified].NodeFilled == true ? emptyLocationsFound : emptyLocationsFound + 1;
-            }
-            else
-            {
-                (int modified, int same) acquiredCoords = (FetchModifiedCoord(coordPairs[0].Item1, coordPairs[1].Item1), coordPairs[0].Item2);
-                validNodeFiredAt = Shoot(grids.playerGrid, acquiredCoords);
-                emptyLocationsFound = grids.playerGrid[acquiredCoords.modified, acquiredCoords.same].NodeFilled == true ? emptyLocationsFound : emptyLocationsFound + 1;
-            }
-        }
+        validNodeFiredAt = Shoot(grids.playerGrid, coordSearchQueue[checkList][0]);
+
+        emptyNodesFiredAt = grids.playerGrid[coordSearchQueue[checkList][0].Item1, coordSearchQueue[checkList][0].Item2].NodeFilled == true 
+        ? emptyNodesFiredAt : emptyNodesFiredAt + 1; // Adds one to emptyNodesFiredAt if it doesn't shoot at a ship segment.
+
+        coordSearchQueue[checkList].RemoveAt(0);
     }
 
 
 
-    static int FetchModifiedCoord(int coord1, int coord2) // Will eventually return a number 1 greater or lower than the two numbers fed in.
-    {
-        int modifiedCoord = coord1;
-
-        while (modifiedCoord == coord1 || modifiedCoord == coord2)
+    static void CompareCoords()
+    { 
+        if (coordPairs[0].Item1 == coordPairs[1].Item1) // Find a way to not hard code this.
         {
-            modifiedCoord += rng.Next(0, 2);
-            modifiedCoord -= rng.Next(0, 2);
+            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 1));
+            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 2));
+            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 3));
+            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 1));
+            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 2));
+            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 3));
         }
-
-        return modifiedCoord;
+        else
+        {
+            coordSearchQueue[0].Add((coordPairs[0].Item1 + 1, coordPairs[0].Item2));
+            coordSearchQueue[0].Add((coordPairs[0].Item1 + 2, coordPairs[0].Item2));
+            coordSearchQueue[0].Add((coordPairs[0].Item1 + 3, coordPairs[0].Item2));
+            coordSearchQueue[1].Add((coordPairs[0].Item1 - 1, coordPairs[0].Item2));
+            coordSearchQueue[1].Add((coordPairs[0].Item1 - 2, coordPairs[0].Item2));
+            coordSearchQueue[1].Add((coordPairs[0].Item1 - 3, coordPairs[0].Item2));
+        }
+        
     }
+
 
 
     // This method is for when one segment of a ship has been found. 
     // It is searching for the ship's orientation.
-    static bool FindShipPosition(Grid grids, (int vertical, int horizontal) coords)
+    static bool FindShipOrientation(Grid grids, (int vertical, int horizontal) coords)
     {
+        coordPairs.Clear();
         (List<int> vertical, List<int> horizontal) increments = ([1, -1], [1, -1]);
 
         while (true) // True since there is gauranteed to be a second ship segments if this method is called.
