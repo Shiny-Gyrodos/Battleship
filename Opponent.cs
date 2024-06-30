@@ -5,52 +5,76 @@ class Opponent : Attacks
 {
     // Consider looking into adding a constructor class.
     // Consider adding a list named something like "queuedCoordPairs" that stores coord pairs that need the surrounding area checked.
-    static List<(int, int)> coordPairs = [];
-    static List<(int, int)>[] coordSearchQueue = [[], []]; // The first list is for positively modified coords while the second is for negatively.
+    static List<(int, int)> successfulCoordPairsShotAt = [];
+    static Queue<(int, int)>[] coordSearchQueue = [[], []]; // The first list is for positively modified coords while the second is for negatively.
     static Random rng = new();
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
     static int emptyNodesFiredAt = 0;
-    public static void Turn()
+    static int turnPhase = 1;
+    public static void Turn(Grid grids)
     {
-        
+        switch (turnPhase)
+        {
+            case 1:
+                turnPhase = HuntForShipSegments(grids) ? turnPhase + 1 : turnPhase;
+                break;
+            case 2:
+                turnPhase = FindShipOrientation(grids) ? turnPhase + 1 : turnPhase;
+                break;
+            case 3:
+                // Code that manages calling the phase 3 methods.
+                break;
+        }
+
+        // Check if ship sunk == true. If so then revert to phase 1, unless there are more coords in the queue (or something like that).
     }
 
 
     // This method is used when the ships's orientation has been found.
-    static void FinishingOffShip(Grid grids, bool checkList1) // Haven't yet accounted for when the first two coord pairs acquired belong to different ships.
+    static void FinishingOffShip(Grid grids) // Haven't yet accounted for when the first two coord pairs acquired belong to different ships.
     {
         bool validNodeFiredAt = false;
-        int checkList = checkList1 ? 0 : 1;
 
-        validNodeFiredAt = Shoot(grids.playerGrid, coordSearchQueue[checkList][0]);
+        while (!validNodeFiredAt || emptyNodesFiredAt < 2)
+        {
+            int randomQueue = rng.Next(0, 2);
+            (int, int) coordPair = coordSearchQueue[randomQueue].Dequeue();
 
-        emptyNodesFiredAt = grids.playerGrid[coordSearchQueue[checkList][0].Item1, coordSearchQueue[checkList][0].Item2].NodeFilled == true 
-        ? emptyNodesFiredAt : emptyNodesFiredAt + 1; // Adds one to emptyNodesFiredAt if it doesn't shoot at a ship segment.
+            validNodeFiredAt = Shoot(grids.playerGrid, coordPair);
 
-        coordSearchQueue[checkList].RemoveAt(0);
+            if (grids.playerGrid[coordPair.Item1, coordPair.Item2].NodeFilled != true)
+            {
+                emptyNodesFiredAt++;
+                coordSearchQueue[randomQueue].Clear();
+            }
+        }
     }
 
 
 
-    static void CompareCoords()
+    static void AddPossibleCoords(int howMany)
     { 
-        if (coordPairs[0].Item1 == coordPairs[1].Item1) // Find a way to not hard code this.
+        if (successfulCoordPairsShotAt[0].Item1 == successfulCoordPairsShotAt[1].Item1)
         {
-            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 1));
-            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 2));
-            coordSearchQueue[0].Add((coordPairs[0].Item1, coordPairs[0].Item2 + 3));
-            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 1));
-            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 2));
-            coordSearchQueue[1].Add((coordPairs[0].Item1, coordPairs[0].Item2 - 3));
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < howMany; j++)
+                {
+                    // If i == 1, then make the coord negative.
+                    coordSearchQueue[i].Enqueue((successfulCoordPairsShotAt[0].Item1, (successfulCoordPairsShotAt[0].Item2 + j + 1) * i == 1 ? -1 : 1));
+                }
+            }
         }
         else
         {
-            coordSearchQueue[0].Add((coordPairs[0].Item1 + 1, coordPairs[0].Item2));
-            coordSearchQueue[0].Add((coordPairs[0].Item1 + 2, coordPairs[0].Item2));
-            coordSearchQueue[0].Add((coordPairs[0].Item1 + 3, coordPairs[0].Item2));
-            coordSearchQueue[1].Add((coordPairs[0].Item1 - 1, coordPairs[0].Item2));
-            coordSearchQueue[1].Add((coordPairs[0].Item1 - 2, coordPairs[0].Item2));
-            coordSearchQueue[1].Add((coordPairs[0].Item1 - 3, coordPairs[0].Item2));
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < howMany; j++)
+                {
+                    // Same as above, except altering the other coord.
+                    coordSearchQueue[i].Enqueue(((successfulCoordPairsShotAt[0].Item1 + j + 1) * i == 1 ? -1 : 1, successfulCoordPairsShotAt[0].Item2));
+                }
+            }
         }
         
     }
@@ -58,10 +82,8 @@ class Opponent : Attacks
 
 
     // This method is for when one segment of a ship has been found. 
-    // It is searching for the ship's orientation.
-    static bool FindShipOrientation(Grid grids, (int vertical, int horizontal) coords)
+    static bool FindShipOrientation(Grid grids)
     {
-        coordPairs.Clear();
         (List<int> vertical, List<int> horizontal) increments = ([1, -1], [1, -1]);
 
         while (true) // True since there is gauranteed to be a second ship segments if this method is called.
@@ -96,7 +118,7 @@ class Opponent : Attacks
 
 
     // Searching for ships by randomly firing.
-    static bool HuntForShipSegments(Grid grids, (int vertical, int horizontal) coords) // Searches randomly for ships.
+    static bool HuntForShipSegments(Grid grids) // Searches randomly for ships.
     {
         while (true)
         {
