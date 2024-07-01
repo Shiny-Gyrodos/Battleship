@@ -173,4 +173,12 @@ abstract class Ship
             Place(chosenGrid, (NodeTypes)i, isPlayerGrid);
         }
     }
+
+
+
+    public static string? CheckForDestroyed()
+    {
+        // Checks both grids for sunken ships, then compares the info to a list of alive and sunken ships, then it announces the differences.
+        return null;
+    }
 }
