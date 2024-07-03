@@ -1,4 +1,6 @@
 ﻿using System;
+// Idea: Store all game data in one file that you can create new instances of. All other files/classes/methods will just alter these existing variables.
+// This will make it a lot easier to create a new instance of a game if you choose to play again.
 
 namespace MyApp
 {
