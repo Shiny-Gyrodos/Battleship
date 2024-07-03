@@ -35,7 +35,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void AtomBomb(Node[,] chosenGrid, (int vertical, int horizontal) coords) // Shoots at a 3x3 area around the specified coords.
+    public static void Nuke(Node[,] chosenGrid, (int vertical, int horizontal) coords) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -55,11 +55,9 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column. 
+    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column.
     {
-        bool validInputRecieved = false;
-
-        while (!validInputRecieved)
+        while (true)
         {
             Console.WriteLine("\nInput the key of the column or row you wish to strip bomb.");
             char playerInput = Console.ReadKey().KeyChar;
@@ -74,7 +72,7 @@ abstract class Attacks // Potentially change from abstract in the future.
                     Shoot(chosenGrid, (i, playerInput - 48));
                 }
 
-                validInputRecieved = true;
+                break;
             }
             else if (playerInput >= 65 && playerInput <= 72)
             {
@@ -85,19 +83,19 @@ abstract class Attacks // Potentially change from abstract in the future.
                     Shoot(chosenGrid, (playerInput - 65, i));
                 }
 
-                validInputRecieved = true;
+                break;
             }
         }
     }
 
 
 
-    public static bool PlaceRadar(Node[,] chosenGrid, int coord1, int coord2)
+    public static bool PlaceRadar(Node[,] chosenGrid, (int vertical, int horizontal) coords)
     {
         // If statement is checking whether the spot chosen already has a radar placed on it or not.
         // 48 is the number 0 in the ASCII table, and 57 is the number 9. ASCII table link : https://www.asciitable.com
         // Radars can't be placed on nodes you've already fired at.
-        if (chosenGrid[coord1, coord2].Icon >= 48 && chosenGrid[coord1, coord2].Icon <= 57 && !chosenGrid[coord1, coord2].FiredAt)
+        if (chosenGrid[coords.vertical, coords.horizontal].Icon >= 48 && chosenGrid[coords.vertical, coords.horizontal].Icon <= 57 && !chosenGrid[coords.vertical, coords.horizontal].FiredAt)
         {
             return false;
         }
@@ -111,7 +109,7 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coord1 + i, coord2 + j].NodeFilled != false)
+                    if (chosenGrid[coords.vertical + i, coords.horizontal + j].NodeFilled != false)
                     {
                         detectedObjects++;
                     }
@@ -120,8 +118,21 @@ abstract class Attacks // Potentially change from abstract in the future.
             }
         }
 
-        chosenGrid[coord1, coord2].Icon = (char)detectedObjects;
+        chosenGrid[coords.vertical, coords.horizontal].Icon = (char)detectedObjects;
         return true;
+    }
+
+
+
+    public static bool PlaceMine(Node[,] chosenGrid, (int vertical, int horizontal) coords)
+    {
+        if (chosenGrid[coords.vertical, coords.horizontal].NodeFilled == false)
+        {
+            chosenGrid[coords.vertical, coords.horizontal] = new Node(null, chosenGrid[coords.vertical, coords.horizontal].FiredAt, '+', NodeTypes.other);
+            return true;
+        }
+
+        return false;
     }
 
 
