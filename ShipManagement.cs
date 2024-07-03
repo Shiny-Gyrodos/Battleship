@@ -176,9 +176,26 @@ abstract class Ship
 
 
 
-    public static string? CheckForDestroyed()
+    public static List<NodeTypes>[] CheckForDestroyed(Node[,] chosenGrid, List<NodeTypes>[] shipsLeftPrevious)
     {
-        // Checks both grids for sunken ships, then compares the info to a list of alive and sunken ships, then it announces the differences.
-        return null;
+        List<NodeTypes>[] shipsLeftUpdated = [[], [], [], [], [], []];
+
+        // Sorts the node types left into their respective lists.
+        foreach (Node node in chosenGrid)
+        {
+            shipsLeftUpdated[(int)node.ShipType].Add(node.ShipType);
+        }
+
+        // Checks if a ship has been sunk.
+        for (int i = 1; i <= 5; i++)
+        {
+            if (shipsLeftUpdated[i].Count == 0 && shipsLeftPrevious[i].Count > 0)
+            {
+                Console.WriteLine("\n" + (NodeTypes)i);
+                break;
+            }
+        }
+
+        return shipsLeftUpdated;
     }
 }
