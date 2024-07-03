@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 class Opponent : Attacks
 {
     // Consider looking into adding a constructor class.
+    static List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
     static List<(int, int)> successfulCoordPairsShotAt = [];
     static Queue<(int, int)>[] coordSearchQueue = [[], []]; // The first queue is for positively modified coords while the second is for negatively.
     static Random rng = new();
@@ -16,19 +17,18 @@ class Opponent : Attacks
         {
             case 1:
                 turnPhase = HuntForShipSegments(grids) ? turnPhase + 1 : turnPhase;
-                turnPhase = Ship.CheckForDestroyed() == null ? turnPhase : 1;
+                turnPhase = Ship.CheckForDestroyed(grids.playerGrid, shipsLeft) == null ? turnPhase : 1;
                 break;
             case 2:
                 turnPhase = FindShipOrientation(grids) ? turnPhase + 1 : turnPhase;
-                turnPhase = Ship.CheckForDestroyed() == null ? turnPhase : 1;
+                turnPhase = Ship.CheckForDestroyed(grids.playerGrid, shipsLeft) == null ? turnPhase : 1;
                 break;
             case 3:
                 if (coordSearchQueue[0].Count + coordSearchQueue[1].Count == 0)
                 {
                     AddPossibleCoords();
                 }
-
-                if (emptyNodesFiredAt == 2 || Ship.CheckForDestroyed() == null)
+                if (emptyNodesFiredAt == 2 || Ship.CheckForDestroyed(grids.playerGrid, shipsLeft) == null)
                 {
                     turnPhase = 1;
                     break;
