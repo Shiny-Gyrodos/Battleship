@@ -10,6 +10,8 @@
 
 abstract class Ship
 {
+    #region Ship placement code
+
     static Random rng = new(); // Remove as many static variables as possible in the future.
     static bool shipPlaced;
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
@@ -174,7 +176,8 @@ abstract class Ship
         }
     }
 
-
+    #endregion 
+    #region Ships destroyed?
 
     public static List<NodeTypes>[] CheckForDestroyed(Node[,] chosenGrid, List<NodeTypes>[] shipsLeftPrevious)
     {
@@ -198,4 +201,6 @@ abstract class Ship
 
         return shipsLeftUpdated;
     }
+
+    #endregion
 }
