@@ -86,21 +86,21 @@ class Opponent : Attacks
     // This method is for when one segment of a ship has been found. 
     static bool FindShipOrientation(Grid grids)
     {
-        (List<int> vertical, List<int> horizontal) = ([1, -1], [1, -1]);
+        (List<int> column, List<int> row) = ([1, -1], [1, -1]);
 
         while (true) // True since there is gauranteed to be a second ship segments if this method is called.
         {
             // Sets the random list to a random one if both have more than one element left in them, else it sets it to whichever one has elements left in it.
             List<int> randomList = rng.Next(1, 5) > 1.5 ?
-            (vertical.Count > 0 ? ref vertical : ref horizontal) : 
-            (horizontal.Count > 0 ? ref horizontal : ref vertical);
+            (column.Count > 0 ? ref column : ref row) : 
+            (row.Count > 0 ? ref row : ref column);
 
             int randomIncrement = randomList[rng.Next(0, randomList.Count)];
 
-            if (Shoot(grids.playerGrid, randomList == vertical ? (coords.column + randomIncrement, coords.row) : (coords.column, coords.row + randomIncrement))) 
+            if (Shoot(grids.playerGrid, randomList == column ? (coords.column + randomIncrement, coords.row) : (coords.column, coords.row + randomIncrement))) 
             {    
                 // Returns true if it hit a ship segment, false if not.
-                return randomList == vertical ? 
+                return randomList == column ? 
                 grids.playerGrid[coords.column + randomIncrement, coords.row].NodeFilled == true : 
                 grids.playerGrid[coords.column, coords.row + randomIncrement].NodeFilled == true;
             }
