@@ -7,7 +7,7 @@ class Opponent : Attacks
     static List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
     static List<(int, int)> successfulCoordPairsShotAt = [];
     static Queue<(int, int)>[] coordSearchQueue = [[], []]; // The first queue is for positively modified coords while the second is for negatively.
-    static Random rng = new();
+    static readonly Random rng = new();
     static (int column, int row) coords = (rng.Next(0, 8), rng.Next(0, 8));
     static int emptyNodesFiredAt = 0;
     static int turnPhase = 1;
@@ -42,21 +42,19 @@ class Opponent : Attacks
     // This method is used when the ships's orientation has been found.
     static void FinishingOffShip(Grid grids) // Could be improved by accounting for when the ai finds two ships next to each other.
     {
-        bool validNodeFiredAt = false;
+        (int column, int row) coords;
 
-        while (!validNodeFiredAt || emptyNodesFiredAt < 2)
+        do
         {
             int randomQueue = rng.Next(0, 2);
-            (int, int) coordPair = coordSearchQueue[randomQueue].Dequeue();
+            coords = coordSearchQueue[randomQueue].Dequeue();
 
-            validNodeFiredAt = Shoot(grids.playerGrid, coordPair);
-
-            if (grids.playerGrid[coordPair.Item1, coordPair.Item2].NodeFilled != true)
+            if (grids.playerGrid[coords.column, coords.row].NodeFilled != true)
             {
                 emptyNodesFiredAt++;
                 coordSearchQueue[randomQueue].Clear();
             }
-        }
+        } while (!Shoot(grids.playerGrid, coords) || emptyNodesFiredAt < 2);
     }
 
 
