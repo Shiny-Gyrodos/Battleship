@@ -194,7 +194,7 @@ abstract class Ship
         {
             if (shipsLeftUpdated[i].Count == 0 && shipsLeftPrevious[i].Count > 0)
             {
-                Console.WriteLine("\n" + (NodeTypes)i);
+                Console.WriteLine("\n" + (NodeTypes)i + " has sunk!");
                 break;
             }
         }
