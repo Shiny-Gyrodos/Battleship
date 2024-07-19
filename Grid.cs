@@ -2,10 +2,13 @@ class Grid
 {
     public Node[,] opponentGrid = new Node[8, 8];
     public Node[,] playerGrid = new Node[8, 8];
+}
 
 
 
-    public void Create(Node[,] chosenGrid)
+static class GridExtensions
+{
+    public static void FillWithDefaultNodes(this Node[,] chosenGrid)
     {
         for(int i = 0; i < 8; i++)
         {
@@ -18,7 +21,7 @@ class Grid
 
 
 
-    public void Display()
+    public static void Display(this Grid grid)
     {
         Console.Clear();
         Console.WriteLine("A B C D E F G H\n-----------------");
@@ -27,7 +30,7 @@ class Grid
         {
             for(int j = 0; j < 8; j++)
             {
-                Console.Write($"{opponentGrid[i, j].Icon} ");
+                Console.Write($"{grid.opponentGrid[i, j].Icon} ");
             }
 
             Console.Write($"| {i + 1}");
@@ -40,7 +43,7 @@ class Grid
         {
             for(int j = 0; j < 8; j++)
             {
-                Console.Write($"{playerGrid[i, j].Icon} ");
+                Console.Write($"{grid.playerGrid[i, j].Icon} ");
             }
             Console.Write($"| {i + 1}");
             Console.WriteLine(); 
