@@ -35,7 +35,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void Nuke(Node[,] chosenGrid, (int vertical, int horizontal) coords) // Shoots at a 3x3 area around the specified coords.
+    public static void Nuke(Node[,] chosenGrid, (int column, int row) coords) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -43,7 +43,7 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coords.vertical + i, coords.horizontal + j].NodeFilled != false)
+                    if (chosenGrid[coords.column + i, coords.row + j].NodeFilled != false)
                     {
                         Shoot(chosenGrid, coords);
                     }
@@ -90,12 +90,11 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static bool PlaceRadar(Node[,] chosenGrid, (int vertical, int horizontal) coords)
+    public static bool PlaceRadar(Node[,] chosenGrid, (int column, int row) coords)
     {
-        // If statement is checking whether the spot chosen already has a radar placed on it or not.
-        // 48 is the number 0 in the ASCII table, and 57 is the number 9. ASCII table link : https://www.asciitable.com
+        // Parse checks to see if a radar already exists there.
         // Radars can't be placed on nodes you've already fired at.
-        if (chosenGrid[coords.vertical, coords.horizontal].Icon >= 48 && chosenGrid[coords.vertical, coords.horizontal].Icon <= 57 && !chosenGrid[coords.vertical, coords.horizontal].FiredAt)
+        if (int.TryParse(chosenGrid[coords.column, coords.row].Icon.ToString(), out _) || chosenGrid[coords.column, coords.row].FiredAt)
         {
             return false;
         }
@@ -109,26 +108,26 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coords.vertical + i, coords.horizontal + j].NodeFilled != false)
+                    if (chosenGrid[coords.column + i, coords.row + j].NodeFilled != false && !chosenGrid[coords.column + i, coords.row + j].FiredAt)  
                     {
                         detectedObjects++;
-                    }
+                    }    
                 }
                 catch (IndexOutOfRangeException) { }
             }
         }
 
-        chosenGrid[coords.vertical, coords.horizontal].Icon = (char)detectedObjects;
+        chosenGrid[coords.column, coords.row].Icon = (char)detectedObjects;
         return true;
     }
 
 
 
-    public static bool PlaceMine(Node[,] chosenGrid, (int vertical, int horizontal) coords)
+    public static bool PlaceMine(Node[,] chosenGrid, (int column, int row) coords)
     {
-        if (chosenGrid[coords.vertical, coords.horizontal].NodeFilled == false)
+        if (chosenGrid[coords.column, coords.row].NodeFilled == false && chosenGrid[coords.column, coords.row].FiredAt == false)
         {
-            chosenGrid[coords.vertical, coords.horizontal] = new Node(null, chosenGrid[coords.vertical, coords.horizontal].FiredAt, '+', NodeTypes.other);
+            chosenGrid[coords.column, coords.row] = new Node(null, false, '+', NodeTypes.other);
             return true;
         }
 
