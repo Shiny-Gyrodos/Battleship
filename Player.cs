@@ -13,7 +13,7 @@ class Player : Attacks
             switch ((playerChoice, playerTokens))
             {
                 case ("shoot", _):
-                    validChoiceMade = LoopUntilExecution(PlaceRadar, grids.playerGrid, "You can't shoot there. Try somewhere else.");
+                    validChoiceMade = LoopUntilExecution(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't shoot there. Try somewhere else.");
                     playerTokens++;
                     break;
                 case ("strip bomb", >= 8): // Succeeds no matter what
@@ -25,28 +25,15 @@ class Player : Attacks
                     Nuke(grids.opponentGrid, GetPlayerInput());
                     break;
                 case ("radar", >= 3):
-                    validChoiceMade = LoopUntilExecution(PlaceRadar, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
+                    validChoiceMade = LoopUntilExecution(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
                     break;
                 case ("place mine", >= 1):
-                    validChoiceMade = LoopUntilExecution(PlaceMine, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
+                    validChoiceMade = LoopUntilExecution(PlaceMine, GetPlayerInput, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
                     break;
                 default:
                     Console.Write("\nInvalid input. Please try again.");
                     break;
             }
-        }
-
-
-
-        // Repeats the desired action until it succeeds.
-        static bool LoopUntilExecution(Func<Node[,], (int, int), bool> myMethod, Node[,] grid, string message)
-        {
-            while (!myMethod(grid, GetPlayerInput()))
-            {
-                Console.WriteLine(message);
-            }
-
-            return true;
         }
     }
 
