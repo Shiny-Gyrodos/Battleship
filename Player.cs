@@ -1,50 +1,52 @@
 class Player : Attacks
 {
     static int playerTokens = 0;
-    static void ChooseFiringMode(Grid grids)
+    static void TakeTurn(Grid grids)
     {
         bool validChoiceMade = false;
 
         while (!validChoiceMade)
         {
-            Console.Write("\nChoose a firing mode:\nNormal Attack - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Place Mine - 1 Cost");
+            Console.Write("\nChoose a firing mode:\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Place Mine - 1 Cost");
             string playerChoice = Console.ReadLine().ToLower();
 
-            switch (playerChoice)
+            switch ((playerChoice, playerTokens))
             {
-                case "normal attack": // Repeates till succeeds
-                    validChoiceMade = true;
-                    while (!Shoot(grids.opponentGrid, GetPlayerInput()))
-                    {
-                        Console.Write("You've already shot there. Try somewhere else.");
-                    }
+                case ("shoot", _):
+                    validChoiceMade = LoopUntilExecution(PlaceRadar, grids.playerGrid, "You can't shoot there. Try somewhere else.");
+                    playerTokens++;
                     break;
-                case "strip bomb": // Succeeds no matter what
+                case ("strip bomb", >= 8): // Succeeds no matter what
                     validChoiceMade = true;
                     //StripBomb();
                     break;
-                case "nuke": // Succeeds no matter what
+                case ("nuke", >= 8): // Succeeds no matter what
                     validChoiceMade = true;
                     Nuke(grids.opponentGrid, GetPlayerInput());
                     break;
-                case "radar": // Repeates till succeeds
-                    validChoiceMade = true;
-                    while (!PlaceRadar(grids.opponentGrid, GetPlayerInput()))
-                    {
-                        Console.Write("You can't place a radar there. Try somewhere else.");
-                    }
+                case ("radar", >= 3):
+                    validChoiceMade = LoopUntilExecution(PlaceRadar, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
                     break;
-                case "place mine": // Repeates till succeeds
-                    validChoiceMade = true;
-                    while (!PlaceMine(grids.opponentGrid, GetPlayerInput()))
-                    {
-                        Console.Write("You can't place a mine there. Try somewhere else.");
-                    }
+                case ("place mine", >= 1):
+                    validChoiceMade = LoopUntilExecution(PlaceMine, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
                     break;
                 default:
                     Console.Write("\nInvalid input. Please try again.");
                     break;
             }
+        }
+
+
+
+        // Repeats the desired action until it succeeds.
+        static bool LoopUntilExecution(Func<Node[,], (int, int), bool> myMethod, Node[,] grid, string message)
+        {
+            while (!myMethod(grid, GetPlayerInput()))
+            {
+                Console.WriteLine(message);
+            }
+
+            return true;
         }
     }
 
