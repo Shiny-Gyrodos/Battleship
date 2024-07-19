@@ -150,7 +150,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
     // Repeats the desired action until it succeeds.
-    public static bool LoopUntilExecution(Func<Node[,], (int, int), bool> miscAttackFunction,Func<(int, int)> obtainCoordinates, Node[,] grid, string message = "")
+    public static bool LoopUntilExecution(Func<Node[,], (int, int), bool> miscAttackFunction, Func<(int, int)> obtainCoordinates, Node[,] grid, string message = "")
     {
         while (!miscAttackFunction(grid, obtainCoordinates()))
         {
