@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 abstract class Attacks // Potentially change from abstract in the future.
 {
     static Random rng = new();
@@ -145,18 +147,5 @@ abstract class Attacks // Potentially change from abstract in the future.
             // Shoot returns a boolean that determines whether it shot successfully at the spot specified or not.
             validNodesFound = Shoot(chosenGrid, coords) ? validNodesFound + 1 : validNodesFound;
         }
-    }
-
-
-
-    // Repeats the desired action until it succeeds.
-    public static bool LoopUntilExecution(Func<Node[,], (int, int), bool> miscAttackFunction, Func<(int, int)> obtainCoordinates, Node[,] grid, string message = "")
-    {
-        while (!miscAttackFunction(grid, obtainCoordinates()))
-        {
-            Console.WriteLine(message);
-        }
-
-        return true;
     }
 }
