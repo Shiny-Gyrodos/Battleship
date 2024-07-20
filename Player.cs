@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 class Player : Attacks
 {
     static int playerTokens = 0;
@@ -13,7 +15,7 @@ class Player : Attacks
             switch ((playerChoice, playerTokens))
             {
                 case ("shoot", _):
-                    validChoiceMade = LoopUntilExecution(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't shoot there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't shoot there. Try somewhere else.");
                     playerTokens++;
                     break;
                 case ("strip bomb", >= 8): // Succeeds no matter what
@@ -25,10 +27,10 @@ class Player : Attacks
                     Nuke(grids.opponentGrid, GetPlayerInput());
                     break;
                 case ("radar", >= 3):
-                    validChoiceMade = LoopUntilExecution(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
                     break;
                 case ("place mine", >= 1):
-                    validChoiceMade = LoopUntilExecution(PlaceMine, GetPlayerInput, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceMine, GetPlayerInput, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
                     break;
                 default:
                     Console.Write("\nInvalid input. Please try again.");
@@ -36,6 +38,18 @@ class Player : Attacks
             }
         }
     }
+
+
+
+    public static bool LoopWithMessage(Func<Node[,], (int, int), bool> miscAttackFunction, Func<(int, int)> obtainCoordinates, Node[,] grid, string message = "")
+    {
+        while (!miscAttackFunction(grid, obtainCoordinates()))
+        {
+            Console.WriteLine(message);
+        }
+
+        return true;
+    }    
 
 
     
