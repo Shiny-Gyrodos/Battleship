@@ -9,11 +9,10 @@ namespace MyApp
         static void Main(string[] args)
         { 
             Grid grids = new();
-
-            grids.Create(grids.playerGrid);
-            grids.Create(grids.opponentGrid); // Makes all the grids
-
+            grids.opponentGrid.FillWithDefaultNodes();
+            grids.playerGrid.FillWithDefaultNodes();
             grids.Display();
+            
             Console.Write("\nTest : Press any key to randomly place ships.");
             Console.ReadKey();
 
