@@ -1,53 +1,28 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
+using MyApp;
 
 abstract class Opponent : Attacks
 {
     static readonly Random rng = new();
+    static readonly Func<Brain, Point>[] decisionTree = [GetRandomCoords, GetAlteredCoords, GetQueuedCoords];
     public static void TakeTurn(Grid grids, Brain brain)
     {
-        switch (brain.turnPhase)
+        if (Loop(Shoot, decisionTree[brain.turnPhase], grids.player, brain) is (Point, bool) data && data.shotShip)
         {
-            case 1:
-                if (Loop(Shoot, GetRandomCoords, grids.playerGrid, brain) is ((int, int), bool) data1 && data1.shotShip)
-                {
-                    brain.turnPhase++;
-                    brain.sucShots.Add(data1.coords);
-                    brain.turnPhase = Ship.CheckForDestroyed(grids.playerGrid, brain.shipsLeft) ? brain.turnPhase : 1;
-                }
-                break;
-            case 2:
-                if (Loop(Shoot, GetAlteredCoords, grids.playerGrid, brain) is ((int, int), bool) data2 && data2.shotShip)
-                {
-                    brain.turnPhase++;
-                    brain.sucShots.Add(data2.coords);
-                    brain.turnPhase = Ship.CheckForDestroyed(grids.playerGrid, brain.shipsLeft) ? brain.turnPhase : 1;
-                    AddPossibleCoords(brain);
-                }
-                break;
-            case 3:
-                if (!Loop(Shoot, GetQueuedCoords, grids.playerGrid, brain, 2).shotShip)
-                {
-                    brain.turnPhase = 1;
-                }
-                break;
+            if (brain.turnPhase != 2)
+            {
+                brain.sucShots.Add(data.point);
+            }
+
+            if (brain.turnPhase == 1)
+            {
+                AddPossibleCoords(brain);
+            }
+
+            brain.turnPhase = Ship.CheckForDestroyed(grids.player, ref brain.shipsLeft) ? brain.turnPhase + 1 : 1;
         }
-
-
-        
-        static Point GetRandomCoords(Brain _) => new(rng.Next(0, 8), rng.Next(0, 8));
-
-        // Returns the randomized coord pair with an alteration of 1 or -1 to one of them.
-        static Point GetAlteredCoords(Brain brain) =>  rng.Next(1, 3) > 1.5 ? 
-        brain.sucShots[0] with {Column = brain.sucShots[0].Column + rng.Next(1, 3) > 1.5 ? 1 : -1} :
-        brain.sucShots[0] with {Row = brain.sucShots[0].Row + rng.Next(1, 3) > 1.5 ? 1 : -1};
-
-        // Returns a random dequeue if both queues have the same amount of coords in them, else picks the one with the most and dequeues a pair.
-        static Point GetQueuedCoords(Brain brain) => brain.searchQueue[0].Count == brain.searchQueue[1].Count ? brain.searchQueue[rng.Next(0, 2)].Dequeue() : 
-        (brain.searchQueue[0].Count < brain.searchQueue[1].Count ? 
-        brain.searchQueue[1].Dequeue() : brain.searchQueue[0].Dequeue());
-
-
+                
         // Adds all possible coords the ship could be in.
         static void AddPossibleCoords(Brain brain)
         { 
@@ -58,6 +33,20 @@ abstract class Opponent : Attacks
             }
         }
     }
+
+
+
+    static Point GetRandomCoords(Brain _) => new(rng.Next(0, 8), rng.Next(0, 8));
+
+    // Returns the randomized coord pair with an alteration of 1 or -1 to one of them.
+    static Point GetAlteredCoords(Brain brain) =>  rng.Next(1, 3) > 1.5 ? 
+    brain.sucShots[0] with {Column = brain.sucShots[0].Column + rng.Next(1, 3) > 1.5 ? 1 : -1} :
+    brain.sucShots[0] with {Row = brain.sucShots[0].Row + rng.Next(1, 3) > 1.5 ? 1 : -1};
+
+    // Returns a random dequeue if both queues have the same amount of coords in them, else picks the one with the most and dequeues a pair.
+    static Point GetQueuedCoords(Brain brain) => brain.searchQueue[0].Count == brain.searchQueue[1].Count ? brain.searchQueue[rng.Next(0, 2)].Dequeue() : 
+    (brain.searchQueue[0].Count < brain.searchQueue[1].Count ? 
+    brain.searchQueue[1].Dequeue() : brain.searchQueue[0].Dequeue());
 
 
 
@@ -82,12 +71,8 @@ abstract class Opponent : Attacks
 
 class Brain()
 {
-    public readonly List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
+    public List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
     public readonly List<Point> sucShots = [];
     public readonly Queue<Point>[] searchQueue = [[], []]; // The first queue is for positively modified coords while the second is for negatively.
-    public int turnPhase = 1;
+    public int turnPhase = 0;
 }
-
-
-
-record Point(int Column, int Row);
