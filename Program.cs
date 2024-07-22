@@ -4,20 +4,21 @@
 
 namespace MyApp
 {
+    record Point(int Column, int Row);
     internal class Program
     {
         static void Main(string[] args)
         { 
             Grid grids = new();
-            grids.opponentGrid.FillWithDefaultNodes();
-            grids.playerGrid.FillWithDefaultNodes();
+            grids.opponent.FillWithDefaultNodes();
+            grids.player.FillWithDefaultNodes();
             grids.Display();
             
             Console.Write("\nTest : Press any key to randomly place ships.");
             Console.ReadKey();
 
-            Ship.PlaceAll(grids.playerGrid, true);
-            Ship.PlaceAll(grids.opponentGrid, false);
+            Ship.PlaceAll(grids.player, true);
+            Ship.PlaceAll(grids.opponent, false);
 
             grids.Display();
 

@@ -1,7 +1,7 @@
 class Grid
 {
-    public Node[,] opponentGrid = new Node[8, 8];
-    public Node[,] playerGrid = new Node[8, 8];
+    public Node[,] opponent = new Node[8, 8];
+    public Node[,] player = new Node[8, 8];
 }
 
 
@@ -30,7 +30,7 @@ static class GridExtensions
         {
             for(int j = 0; j < 8; j++)
             {
-                Console.Write($"{grid.opponentGrid[i, j].Icon} ");
+                Console.Write($"{grid.opponent[i, j].Icon} ");
             }
 
             Console.Write($"| {i + 1}");
@@ -43,7 +43,7 @@ static class GridExtensions
         {
             for(int j = 0; j < 8; j++)
             {
-                Console.Write($"{grid.playerGrid[i, j].Icon} ");
+                Console.Write($"{grid.player[i, j].Icon} ");
             }
             Console.Write($"| {i + 1}");
             Console.WriteLine(); 

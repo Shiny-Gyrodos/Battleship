@@ -15,7 +15,7 @@ class Player : Attacks
             switch ((playerChoice, playerTokens))
             {
                 case ("shoot", _):
-                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't shoot there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.player, "You can't shoot there. Try somewhere else.");
                     playerTokens++;
                     break;
                 case ("strip bomb", >= 8): // Succeeds no matter what
@@ -24,13 +24,13 @@ class Player : Attacks
                     break;
                 case ("nuke", >= 8): // Succeeds no matter what
                     validChoiceMade = true;
-                    Nuke(grids.opponentGrid, GetPlayerInput());
+                    Nuke(grids.opponent, GetPlayerInput());
                     break;
                 case ("radar", >= 3):
-                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.playerGrid, "You can't place a radar there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.player, "You can't place a radar there. Try somewhere else.");
                     break;
                 case ("place mine", >= 1):
-                    validChoiceMade = LoopWithMessage(PlaceMine, GetPlayerInput, grids.playerGrid, "You can't place a mine there. Try somewhere else.");
+                    validChoiceMade = LoopWithMessage(PlaceMine, GetPlayerInput, grids.player, "You can't place a mine there. Try somewhere else.");
                     break;
                 default:
                     Console.Write("\nInvalid input. Please try again.");
