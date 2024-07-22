@@ -179,7 +179,7 @@ abstract class Ship
     #endregion 
     #region Ships destroyed?
 
-    public static bool CheckForDestroyed(Node[,] chosenGrid, List<NodeTypes>[] shipsLeftPrevious)
+    public static bool CheckForDestroyed(Node[,] chosenGrid, ref List<NodeTypes>[] shipsLeftPrevious)
     {
         List<NodeTypes>[] shipsLeftUpdated = [[], [], [], [], [], []];
 
@@ -195,10 +195,12 @@ abstract class Ship
             if (shipsLeftUpdated[i].Count == 0 && shipsLeftPrevious[i].Count > 0)
             {
                 Console.WriteLine("\n" + (NodeTypes)i + " has sunk!");
+                shipsLeftPrevious = shipsLeftUpdated;
                 return true;
             }
         }
 
+        shipsLeftPrevious = shipsLeftUpdated;
         return false;
     }
 
