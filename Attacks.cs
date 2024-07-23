@@ -1,25 +1,26 @@
+using System.Drawing;
 using Microsoft.VisualBasic;
 
 abstract class Attacks // Potentially change from abstract in the future.
 {
     static Random rng = new();
 
-    public static bool Shoot(Node[,] chosenGrid, (int vertical, int horizontal) coords)
+    public static bool Shoot(Node[,] chosenGrid, Point point)
     {
         try 
         {
-            if (!chosenGrid[coords.vertical, coords.horizontal].FiredAt)
+            if (!chosenGrid[point.Column, point.Row].FiredAt)
             {
-                switch (chosenGrid[coords.vertical, coords.horizontal].NodeFilled)
+                switch (chosenGrid[point.Column, point.Row].NodeFilled)
                 {
                     case true: // If ship
-                        chosenGrid[coords.vertical, coords.horizontal] = new Node(true, true, 'X', NodeTypes.other);
+                        chosenGrid[point.Column, point.Row] = new Node(true, true, 'X', NodeTypes.other);
                         break;
                     case false: // If empty
-                        chosenGrid[coords.vertical, coords.horizontal] = new Node(false, true, '0', NodeTypes.other);
+                        chosenGrid[point.Column, point.Row] = new Node(false, true, '0', NodeTypes.other);
                         break;
                     case null: // If mine
-                        chosenGrid[coords.vertical, coords.horizontal] = new Node(null, true, '#', NodeTypes.other);
+                        chosenGrid[point.Column, point.Row] = new Node(null, true, '#', NodeTypes.other);
                         MineDetonates(chosenGrid);
                         break;
                 }
@@ -37,7 +38,7 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void Nuke(Node[,] chosenGrid, (int column, int row) coords) // Shoots at a 3x3 area around the specified coords.
+    public static void Nuke(Node[,] chosenGrid, Point point) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -45,9 +46,9 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coords.column + i, coords.row + j].NodeFilled != false)
+                    if (chosenGrid[point.Column + i, point.Row + j].NodeFilled != false)
                     {
-                        Shoot(chosenGrid, coords);
+                        Shoot(chosenGrid, point);
                     }
                 }
                 catch (IndexOutOfRangeException) { }
@@ -71,7 +72,7 @@ abstract class Attacks // Potentially change from abstract in the future.
                 for (int i = 0; i < 8; i++)
                 {
                     // Subtracting 48 brings the char value down to 0-7
-                    Shoot(chosenGrid, (i, playerInput - 48));
+                    Shoot(chosenGrid, new(i, playerInput - 48));
                 }
 
                 break;
@@ -82,7 +83,7 @@ abstract class Attacks // Potentially change from abstract in the future.
                 for (int i = 0; i < 8; i++)
                 {
                     // Subtracting 65 brings the char value down to 0-7
-                    Shoot(chosenGrid, (playerInput - 65, i));
+                    Shoot(chosenGrid, new(playerInput - 65, i));
                 }
 
                 break;
@@ -142,10 +143,10 @@ abstract class Attacks // Potentially change from abstract in the future.
     {
         for (int validNodesFound = 0; validNodesFound < 2; )
         {
-            (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
+            Point point = new(rng.Next(0, 8), rng.Next(0, 8));
 
             // Shoot returns a boolean that determines whether it shot successfully at the spot specified or not.
-            validNodesFound = Shoot(chosenGrid, coords) ? validNodesFound + 1 : validNodesFound;
+            validNodesFound = Shoot(chosenGrid, point) ? validNodesFound + 1 : validNodesFound;
         }
     }
 }
