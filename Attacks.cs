@@ -93,11 +93,11 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static bool PlaceRadar(Node[,] chosenGrid, (int column, int row) coords)
+    public static bool PlaceRadar(Node[,] chosenGrid, Point point)
     {
         // Parse checks to see if a radar already exists there.
         // Radars can't be placed on nodes you've already fired at.
-        if (int.TryParse(chosenGrid[coords.column, coords.row].Icon.ToString(), out _) || chosenGrid[coords.column, coords.row].FiredAt)
+        if (int.TryParse(chosenGrid[point.Column, point.Row].Icon.ToString(), out _) || chosenGrid[point.Column, point.Row].FiredAt)
         {
             return false;
         }
@@ -111,7 +111,7 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[coords.column + i, coords.row + j].NodeFilled != false && !chosenGrid[coords.column + i, coords.row + j].FiredAt)  
+                    if (chosenGrid[point.Column + i, point.Row + j].NodeFilled != false && !chosenGrid[point.Column + i, point.Row + j].FiredAt)  
                     {
                         detectedObjects++;
                     }    
@@ -120,17 +120,17 @@ abstract class Attacks // Potentially change from abstract in the future.
             }
         }
 
-        chosenGrid[coords.column, coords.row].Icon = (char)detectedObjects;
+        chosenGrid[point.Column, point.Row].Icon = (char)detectedObjects;
         return true;
     }
 
 
 
-    public static bool PlaceMine(Node[,] chosenGrid, (int column, int row) coords)
+    public static bool PlaceMine(Node[,] chosenGrid, Point point)
     {
-        if (chosenGrid[coords.column, coords.row].NodeFilled == false && chosenGrid[coords.column, coords.row].FiredAt == false)
+        if (chosenGrid[point.Column, point.Row].NodeFilled == false && chosenGrid[point.Column, point.Row].FiredAt == false)
         {
-            chosenGrid[coords.column, coords.row] = new Node(null, false, '+', NodeTypes.other);
+            chosenGrid[point.Column, point.Row] = new Node(null, false, '+', NodeTypes.other);
             return true;
         }
 
