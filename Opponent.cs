@@ -5,8 +5,8 @@ using MyApp;
 class Brain()
 {
     public List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
-    public readonly List<Point> sucShots = new(2);
-    public Queue<Point> searchQueue = []; // The first queue is for positively modified coords while the second is for negatively.
+    public readonly List<Point> sucShots = new(2); // Stores coords successfully shot at for comparison.
+    public Queue<Point> searchQueue = []; // Stores coords to shoot at.
     public int turnPhase = 0;
 }
 
@@ -59,7 +59,6 @@ abstract class Opponent : Attacks
 
 
 
-    // Returns a random dequeue if both queues have the same amount of coords in them, else picks the one with the most and dequeues a pair.
     static Point GetQueuedCoords(Brain brain) => brain.searchQueue.Dequeue();
 
 
