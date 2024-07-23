@@ -4,7 +4,6 @@
 
 namespace MyApp
 {
-    record Point(int Column, int Row);
     internal class Program
     {
         static void Main(string[] args)
