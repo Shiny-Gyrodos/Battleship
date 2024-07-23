@@ -1,9 +1,21 @@
+using System.Dynamic;
 using System.Security.Cryptography;
+class PlayerData
+{
+    public int Tokens;
+    public PlayerData()
+    {
+        Tokens = 0;
+        int.Clamp(Tokens, 0, 10);
+    }
+}
+
+
 
 class Player : Attacks
 {
-    static int playerTokens = 0;
-    static void TakeTurn(Grid grids)
+    delegate bool Option(Node[,] chosenGrid, Point point);
+    public static void TakeTurn(Grid grids, PlayerData player)
     {
         bool validChoiceMade = false;
 
@@ -12,11 +24,11 @@ class Player : Attacks
             Console.Write("\nChoose a firing mode:\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Place Mine - 1 Cost");
             string playerChoice = Console.ReadLine().ToLower();
 
-            switch ((playerChoice, playerTokens))
+            switch ((playerChoice, player.Tokens))
             {
                 case ("shoot", _):
-                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.player, "You can't shoot there. Try somewhere else.");
-                    playerTokens++;
+                    validChoiceMade = LoopWithMessage(Shoot, GetPlayerInput, grids.player, "You can't shoot there. Try somewhere else.");
+                    player.Tokens++;
                     break;
                 case ("strip bomb", >= 8): // Succeeds no matter what
                     validChoiceMade = true;
@@ -41,9 +53,9 @@ class Player : Attacks
 
 
 
-    public static bool LoopWithMessage(Func<Node[,], (int, int), bool> miscAttackFunction, Func<(int, int)> obtainCoordinates, Node[,] grid, string message = "")
+    static bool LoopWithMessage(Option option, Func<Point> obtainCoordinates, Node[,] grid, string message = "")
     {
-        while (!miscAttackFunction(grid, obtainCoordinates()))
+        while (!option(grid, obtainCoordinates()))
         {
             Console.WriteLine(message);
         }
@@ -53,7 +65,7 @@ class Player : Attacks
 
 
     
-    static (int, int) GetPlayerInput()
+    static Point GetPlayerInput()
     {
         while (true)
         {
@@ -63,7 +75,7 @@ class Player : Attacks
             // Checking if the letter is valid by using the character's values. See https://www.asciitable.com/ for more info.
             if (playerInput.letter >= 97 && playerInput.letter <= 104 && playerInput.number >= 1 && playerInput.number <= 8)
             {
-                return (playerInput.letter - 97, playerInput.number - 1);
+                return new(playerInput.letter - 97, playerInput.number - 1);
             }
             else
             {
