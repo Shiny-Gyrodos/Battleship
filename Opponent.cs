@@ -2,12 +2,25 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using MyApp;
-class Brain()
+class Brain
 {
-    public List<NodeTypes>[] shipsLeft = [[], [], [], [], [], []];
+    public List<NodeTypes>[] shipsLeft;
     public readonly List<Point> sucShots = new(2); // Stores coords successfully shot at for comparison.
-    public Queue<Point> searchQueue = []; // Stores coords to shoot at.
+    public Queue<Point> searchQueue = []; // Stores coords to shoot at
     public int turnPhase = 0;
+
+    public Brain(Node[,] chosenGrid)
+    {
+        foreach (Node node in chosenGrid)
+        {
+            shipsLeft[(int)node.ShipType].Add(node.ShipType);
+        }
+
+        if (shipsLeft == null)
+        {
+            throw new NullReferenceException("shipsLeft contained a null value when exiting the contructor");
+        }
+    }
 }
 
 
@@ -53,6 +66,7 @@ abstract class Opponent : Attacks
 
 
     // Returns the randomized coord pair with an alteration of 1 or -1 to one of them.
+    // Add code that makes sure that coords aren't out of the boundsof the array.
     static Point GetAlteredCoords(Brain brain) => rng.Next(1, 3) > 1.5 ? 
     brain.sucShots[0] with {Column = brain.sucShots[0].Column + rng.Next(1, 3) > 1.5 ? 1 : -1} :
     brain.sucShots[0] with {Row = brain.sucShots[0].Row + rng.Next(1, 3) > 1.5 ? 1 : -1};
