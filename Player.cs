@@ -1,12 +1,18 @@
 using System.Dynamic;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using MyApp;
 class PlayerData
 {
-    public int Tokens;
+    int tokens;
+    public int Tokens
+    {
+        get => tokens;
+        set => tokens = value > 10 ? 10 : value;
+    }
     public PlayerData()
     {
         Tokens = 0;
-        int.Clamp(Tokens, 0, 10);
     }
 }
 
@@ -17,70 +23,101 @@ class Player : Attacks
     delegate bool Option(Node[,] chosenGrid, Point point);
     public static void TakeTurn(Grid grids, PlayerData player)
     {
-        bool validChoiceMade = false;
+        invalidChoiceMade:
 
-        while (!validChoiceMade)
+        Console.Write("\nChoose an option:\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Mine - 1 Cost");
+        string playerChoice = Console.ReadLine().ToLower();
+
+        switch ((playerChoice, player.Tokens))
         {
-            Console.Write("\nChoose a firing mode:\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Place Mine - 1 Cost");
-            string playerChoice = Console.ReadLine().ToLower();
+            case ("shoot", _):
+                LoopWithMessage(Shoot, GetPlayerInput, grids.opponent, "You can't shoot there. Try somewhere else.");
+                player.Tokens++;
+                break;
+            case ("strip bomb", >= 8): // Succeeds no matter what
+                StripBomb(grids.opponent, GetPlayerInputForStripBomb());
+                break;
+            case ("nuke", >= 8): // Succeeds no matter what
+                Nuke(grids.opponent, GetPlayerInput());
+                break;
+            case ("radar", >= 3):
+                LoopWithMessage(PlaceRadar, GetPlayerInput, grids.opponent, "You can't place a radar there. Try somewhere else.");
+                break;
+            case ("place mine", >= 1):
+                LoopWithMessage(PlaceMine, GetPlayerInput, grids.opponent, "You can't place a mine there. Try somewhere else.");
+                break;
+            default:
+                Console.WriteLine("\nInvalid input. Please try again.");
+                goto invalidChoiceMade;
+        }
+    }
 
-            switch ((playerChoice, player.Tokens))
+
+
+    static void LoopWithMessage(Option option, Func<Point> obtainCoordinates, Node[,] grid, string message)
+    {
+        while (!option(grid, obtainCoordinates()))
+        {
+            Console.WriteLine(message);
+        }
+    }    
+
+
+    
+    // Gets the player's desired coordinates for various actions.
+    static Point GetPlayerInput()
+    {
+        while (true)
+        {
+            Console.Write("\nInput a letter (vertical coordinate), then a number (horizontal coordinate).");
+
+            (char testLetter, char testNumber) = (Console.ReadKey().KeyChar, Console.ReadKey().KeyChar);       
+            
+            // Checking if the letter is valid by using the character's values. See https://www.asciitable.com/ for more info.
+            if (ParseChar(testLetter) is var letter && letter.isColumn != null && ParseChar(testNumber) is var number && number.isColumn != null)
             {
-                case ("shoot", _):
-                    validChoiceMade = LoopWithMessage(Shoot, GetPlayerInput, grids.player, "You can't shoot there. Try somewhere else.");
-                    player.Tokens++;
-                    break;
-                case ("strip bomb", >= 8): // Succeeds no matter what
-                    validChoiceMade = true;
-                    //StripBomb();
-                    break;
-                case ("nuke", >= 8): // Succeeds no matter what
-                    validChoiceMade = true;
-                    Nuke(grids.opponent, GetPlayerInput());
-                    break;
-                case ("radar", >= 3):
-                    validChoiceMade = LoopWithMessage(PlaceRadar, GetPlayerInput, grids.player, "You can't place a radar there. Try somewhere else.");
-                    break;
-                case ("place mine", >= 1):
-                    validChoiceMade = LoopWithMessage(PlaceMine, GetPlayerInput, grids.player, "You can't place a mine there. Try somewhere else.");
-                    break;
-                default:
-                    Console.Write("\nInvalid input. Please try again.");
-                    break;
+                return new((int)letter.parsedValue, (int)number.parsedValue);
+            }
+            else
+            {
+                Console.Write("\nInvalid coordinates entered. Please try again.");
+            }
+        } 
+    }
+
+
+
+    // Gets the player's desired column or row to bomb.
+    static (int number, bool isColumn) GetPlayerInputForStripBomb()
+    {
+        while (true)
+        {
+            Console.Write("\nInput the letter or number of the column or row you want to bomb.");
+
+            char numOrLetter = Console.ReadKey().KeyChar; 
+
+            if (ParseChar(numOrLetter) is var returnData && returnData.isColumn != null)
+            {
+                return ((int)returnData.parsedValue, (bool)returnData.isColumn);
             }
         }
     }
 
 
 
-    static bool LoopWithMessage(Option option, Func<Point> obtainCoordinates, Node[,] grid, string message = "")
+    static (int? parsedValue, bool? isColumn) ParseChar(char character)
     {
-        while (!option(grid, obtainCoordinates()))
+        if (character >= 49 && character <= 57)
         {
-            Console.WriteLine(message);
+            return (character - 49, false);
         }
-
-        return true;
-    }    
-
-
-    
-    static Point GetPlayerInput()
-    {
-        while (true)
+        else if (character >= 97 && character <= 104)
         {
-            Console.Write("\nInput a letter (vertical coordinate), then a number (horizontal coordinate).");
-            (char letter, int number) playerInput = (Console.ReadKey().KeyChar, int.Parse(Console.ReadKey().KeyChar.ToString()));
-            
-            // Checking if the letter is valid by using the character's values. See https://www.asciitable.com/ for more info.
-            if (playerInput.letter >= 97 && playerInput.letter <= 104 && playerInput.number >= 1 && playerInput.number <= 8)
-            {
-                return new(playerInput.letter - 97, playerInput.number - 1);
-            }
-            else
-            {
-                Console.Write("\nInvalid coordinates entered. Please try agaim.");
-            }
-        } 
+            return (character - 97, true);
+        }
+        else
+        {
+            return (null, null);
+        }
     }
 }
