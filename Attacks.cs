@@ -1,39 +1,47 @@
 using System.Drawing;
 using Microsoft.VisualBasic;
 
-abstract class Attacks // Potentially change from abstract in the future.
+abstract class Attacks
 {
-    static Random rng = new();
+    static readonly Random rng = new();
 
     public static bool Shoot(Node[,] chosenGrid, Point point)
     {
-        try 
+        if (!chosenGrid[point.Column, point.Row].FiredAt)
         {
-            if (!chosenGrid[point.Column, point.Row].FiredAt)
+            switch (chosenGrid[point.Column, point.Row].NodeFilled)
             {
-                switch (chosenGrid[point.Column, point.Row].NodeFilled)
-                {
-                    case true: // If ship
-                        chosenGrid[point.Column, point.Row] = new Node(true, true, 'X', NodeTypes.other);
-                        break;
-                    case false: // If empty
-                        chosenGrid[point.Column, point.Row] = new Node(false, true, '0', NodeTypes.other);
-                        break;
-                    case null: // If mine
-                        chosenGrid[point.Column, point.Row] = new Node(null, true, '#', NodeTypes.other);
-                        MineDetonates(chosenGrid);
-                        break;
-                }
-
-                return true;
+                case true: // If ship
+                    chosenGrid[point.Column, point.Row] = new Node(true, true, 'X', NodeTypes.other);
+                    break;
+                case false: // If empty
+                    chosenGrid[point.Column, point.Row] = new Node(false, true, '0', NodeTypes.other);
+                    break;
+                case null: // If mine
+                    chosenGrid[point.Column, point.Row] = new Node(null, true, '#', NodeTypes.other);
+                    MineDetonates(chosenGrid);
+                    break;
             }
+
+            return true;
+        }
+
+        return false; // If else
+    }
+
+
+
+    public static bool TryShoot(Node[,] chosenGrid, Point point)
+    {
+        try
+        {
+            Shoot(chosenGrid, point);
+            return true;
         }
         catch (IndexOutOfRangeException)
         {
             return false;
         }
-
-        return false; // If else
     }
 
 
@@ -46,7 +54,7 @@ abstract class Attacks // Potentially change from abstract in the future.
             {
                 try 
                 { 
-                    if (chosenGrid[point.Column + i, point.Row + j].NodeFilled != false)
+                    if (chosenGrid[point.Column + i, point.Row + j].FiredAt == false)
                     {
                         Shoot(chosenGrid, point);
                     }
@@ -58,36 +66,11 @@ abstract class Attacks // Potentially change from abstract in the future.
 
 
 
-    public static void StripBomb(Node[,] chosenGrid) // Shoots all nodes on a specified row or column.
+    public static void StripBomb(Node[,] chosenGrid, (int value, bool isColumn) data) // Shoots all nodes on a specified row or column.
     {
-        while (true)
+        for (int i = 0; i < 8; i++)
         {
-            Console.WriteLine("\nInput the key of the column or row you wish to strip bomb.");
-            char playerInput = Console.ReadKey().KeyChar;
-
-            // 49-56 are the char values of numbers 1-8. 65-72 are the char values of A-H.
-            if (playerInput >= 49 && playerInput <= 56)
-            {
-                // Bombing a row,
-                for (int i = 0; i < 8; i++)
-                {
-                    // Subtracting 48 brings the char value down to 0-7
-                    Shoot(chosenGrid, new(i, playerInput - 48));
-                }
-
-                break;
-            }
-            else if (playerInput >= 65 && playerInput <= 72)
-            {
-                // Bombing a column
-                for (int i = 0; i < 8; i++)
-                {
-                    // Subtracting 65 brings the char value down to 0-7
-                    Shoot(chosenGrid, new(playerInput - 65, i));
-                }
-
-                break;
-            }
+            Shoot(chosenGrid, data.isColumn ? new(data.value, i) : new(i, data.value));
         }
     }
 
