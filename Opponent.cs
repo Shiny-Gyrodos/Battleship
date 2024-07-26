@@ -4,21 +4,16 @@ using System.Security.Principal;
 using MyApp;
 class Brain
 {
-    public List<NodeTypes>[] shipsLeft;
+    public int[] shipsLeft = new int[6];
     public readonly List<Point> sucShots = new(2); // Stores coords successfully shot at for comparison.
     public Queue<Point> searchQueue = []; // Stores coords to shoot at
     public int turnPhase = 0;
 
-    public Brain(Node[,] chosenGrid)
+    public Brain(Node[,] playerGrid)
     {
-        foreach (Node node in chosenGrid)
+        foreach (Node node in playerGrid)
         {
-            shipsLeft[(int)node.ShipType].Add(node.ShipType);
-        }
-
-        if (shipsLeft == null)
-        {
-            throw new NullReferenceException("shipsLeft contained a null value when exiting the contructor");
+            shipsLeft[(int)node.ShipType]++;
         }
     }
 }
@@ -28,14 +23,17 @@ class Brain
 abstract class Opponent : Attacks
 {
     delegate Point GetCoords(Brain brain);
-    delegate bool Attack(Node[,] chosenGrid, Point point);
+    delegate bool Attack(ref Node[,] chosenGrid, Point point);
     static readonly Random rng = new();
     static readonly GetCoords[] decisionTree = [GetRandomCoords, GetAlteredCoords, GetQueuedCoords];
-    public static void TakeTurn(Grid grids, ref Brain brain)
+
+
+
+    public static bool TakeTurn(ref Grid grids, ref Brain brain)
     {
         brain.turnPhase = brain.turnPhase == 2 && brain.searchQueue.Count == 0 ? 0 : brain.turnPhase;
 
-        if (LoopUntilExecution(Shoot, decisionTree[brain.turnPhase], grids.player, brain) is (Point, bool) data && data.shotShip)
+        if (LoopUntilExecution(Shoot, decisionTree[brain.turnPhase], ref grids.player, brain) is (Point, bool) data && data.shotShip)
         {
             if (brain.turnPhase != 2)
             {
@@ -55,8 +53,10 @@ abstract class Opponent : Attacks
             else
             {
                 brain.turnPhase++;
-            } 
+            }
         }
+
+        return brain.shipsLeft[1] + brain.shipsLeft[2] + brain.shipsLeft[3] + brain.shipsLeft[4] + brain.shipsLeft[5] > 0;
     }
 
 
@@ -68,8 +68,12 @@ abstract class Opponent : Attacks
     // Returns the randomized coord pair with an alteration of 1 or -1 to one of them.
     // Add code that makes sure that coords aren't out of the boundsof the array.
     static Point GetAlteredCoords(Brain brain) => rng.Next(1, 3) > 1.5 ? 
-    brain.sucShots[0] with {Column = brain.sucShots[0].Column + rng.Next(1, 3) > 1.5 ? 1 : -1} :
-    brain.sucShots[0] with {Row = brain.sucShots[0].Row + rng.Next(1, 3) > 1.5 ? 1 : -1};
+    brain.sucShots[0] with {Column = brain.sucShots[0].Column + ReturnRandom(1, -1)} :
+    brain.sucShots[0] with {Row = brain.sucShots[0].Row + ReturnRandom(1, -1)};
+
+
+
+    static T ReturnRandom<T>(params T[] items) => items[rng.Next(0, items.Length - 1)];
 
 
 
@@ -115,14 +119,14 @@ abstract class Opponent : Attacks
 
 
     // Repeats the desired function until it succeeds.
-    static (Point point, bool shotShip) LoopUntilExecution(Attack attack, GetCoords obtainCoords, Node[,] grid, Brain brain)
+    static (Point point, bool shotShip) LoopUntilExecution(Attack attack, GetCoords obtainCoords, ref Node[,] grid, Brain brain)
     {
         Point point;
 
         do
         {
             point = obtainCoords(brain);
-        } while (!attack(grid, point));
+        } while (!attack(ref grid, point));
 
         return (point, grid[point.Column, point.Row].NodeFilled == true);
     }
