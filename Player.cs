@@ -5,58 +5,67 @@ using MyApp;
 class PlayerData
 {
     int tokens;
+    public int[] shipsLeft = new int[6];
     public int Tokens
     {
         get => tokens;
         set => tokens = value > 10 ? 10 : value;
     }
-    public PlayerData()
+    public PlayerData(Node[,] opponentGrid)
     {
         Tokens = 0;
+
+        foreach (Node node in opponentGrid)
+        {
+            shipsLeft[(int)node.ShipType]++;
+        }
     }
 }
 
 
 
-class Player : Attacks
+abstract class Player : Attacks
 {
-    delegate bool Option(Node[,] chosenGrid, Point point);
-    public static void TakeTurn(Grid grids, PlayerData player)
+    delegate bool Option(ref Node[,] chosenGrid, Point point);
+    public static bool TakeTurn(ref Grid grids, ref PlayerData player)
     {
-        invalidChoiceMade:
+        InvalidChoiceMade:
 
-        Console.Write("\nChoose an option:\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Mine - 1 Cost");
-        string playerChoice = Console.ReadLine().ToLower();
+        Console.Write($"\nChoose an option: Your tokens: {player.Tokens}\nShoot - 0 Cost | Strip Bomb - 8 Cost | Nuke - 8 Cost | Radar - 3 Cost | Mine - 1 Cost\n");
+        string playerChoice = Console.ReadLine().ToLower().TrimStart().TrimEnd();
 
         switch ((playerChoice, player.Tokens))
         {
             case ("shoot", _):
-                LoopWithMessage(Shoot, GetPlayerInput, grids.opponent, "You can't shoot there. Try somewhere else.");
+                LoopWithMessage(Shoot, GetPlayerInput, ref grids.opponent, "\nYou can't shoot there. Try somewhere else.");
                 player.Tokens++;
                 break;
             case ("strip bomb", >= 8): // Succeeds no matter what
-                StripBomb(grids.opponent, GetPlayerInputForStripBomb());
+                StripBomb(ref grids.opponent, GetPlayerInputForStripBomb());
                 break;
             case ("nuke", >= 8): // Succeeds no matter what
-                Nuke(grids.opponent, GetPlayerInput());
+                Nuke(ref grids.opponent, GetPlayerInput());
                 break;
             case ("radar", >= 3):
-                LoopWithMessage(PlaceRadar, GetPlayerInput, grids.opponent, "You can't place a radar there. Try somewhere else.");
+                LoopWithMessage(PlaceRadar, GetPlayerInput, ref grids.opponent, "\nYou can't place a radar there. Try somewhere else.");
                 break;
-            case ("place mine", >= 1):
-                LoopWithMessage(PlaceMine, GetPlayerInput, grids.opponent, "You can't place a mine there. Try somewhere else.");
+            case ("mine", >= 1):
+                LoopWithMessage(PlaceMine, GetPlayerInput, ref grids.player, "\nYou can't place a mine there. Try somewhere else.");
                 break;
             default:
                 Console.WriteLine("\nInvalid input. Please try again.");
-                goto invalidChoiceMade;
+                goto InvalidChoiceMade;
         }
+
+        Ship.CheckForDestroyed(grids.opponent, ref player.shipsLeft);
+        return player.shipsLeft[1] + player.shipsLeft[2] + player.shipsLeft[3] + player.shipsLeft[4] + player.shipsLeft[5] > 0;
     }
 
 
 
-    static void LoopWithMessage(Option option, Func<Point> obtainCoordinates, Node[,] grid, string message)
+    static void LoopWithMessage(Option option, Func<Point> obtainCoordinates, ref Node[,] grid, string message)
     {
-        while (!option(grid, obtainCoordinates()))
+        while (!option(ref grid, obtainCoordinates()))
         {
             Console.WriteLine(message);
         }
