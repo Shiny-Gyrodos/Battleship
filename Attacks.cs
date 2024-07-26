@@ -5,7 +5,7 @@ abstract class Attacks
 {
     static readonly Random rng = new();
 
-    public static bool Shoot(Node[,] chosenGrid, Point point)
+    public static bool Shoot(ref Node[,] chosenGrid, Point point)
     {
         if (!chosenGrid[point.Column, point.Row].FiredAt)
         {
@@ -19,7 +19,7 @@ abstract class Attacks
                     break;
                 case null: // If mine
                     chosenGrid[point.Column, point.Row] = new Node(null, true, '#', NodeTypes.other);
-                    MineDetonates(chosenGrid);
+                    MineDetonates(ref chosenGrid);
                     break;
             }
 
@@ -31,11 +31,11 @@ abstract class Attacks
 
 
 
-    public static bool TryShoot(Node[,] chosenGrid, Point point)
+    public static bool TryShoot(ref Node[,] chosenGrid, Point point)
     {
         try
         {
-            Shoot(chosenGrid, point);
+            Shoot(ref chosenGrid, point);
             return true;
         }
         catch (IndexOutOfRangeException)
@@ -46,7 +46,7 @@ abstract class Attacks
 
 
 
-    public static void Nuke(Node[,] chosenGrid, Point point) // Shoots at a 3x3 area around the specified coords.
+    public static void Nuke(ref Node[,] chosenGrid, Point point) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -56,7 +56,7 @@ abstract class Attacks
                 { 
                     if (chosenGrid[point.Column + i, point.Row + j].FiredAt == false)
                     {
-                        Shoot(chosenGrid, point);
+                        Shoot(ref chosenGrid, point);
                     }
                 }
                 catch (IndexOutOfRangeException) { }
@@ -66,17 +66,17 @@ abstract class Attacks
 
 
 
-    public static void StripBomb(Node[,] chosenGrid, (int value, bool isColumn) data) // Shoots all nodes on a specified row or column.
+    public static void StripBomb(ref Node[,] chosenGrid, (int value, bool isColumn) data) // Shoots all nodes on a specified row or column.
     {
         for (int i = 0; i < 8; i++)
         {
-            Shoot(chosenGrid, data.isColumn ? new(data.value, i) : new(i, data.value));
+            Shoot(ref chosenGrid, data.isColumn ? new(data.value, i) : new(i, data.value));
         }
     }
 
 
 
-    public static bool PlaceRadar(Node[,] chosenGrid, Point point)
+    public static bool PlaceRadar(ref Node[,] chosenGrid, Point point)
     {
         // Parse checks to see if a radar already exists there.
         // Radars can't be placed on nodes you've already fired at.
@@ -103,13 +103,13 @@ abstract class Attacks
             }
         }
 
-        chosenGrid[point.Column, point.Row].Icon = (char)detectedObjects;
+        chosenGrid[point.Column, point.Row].Icon = (char)(detectedObjects + 48);
         return true;
     }
 
 
 
-    public static bool PlaceMine(Node[,] chosenGrid, Point point)
+    public static bool PlaceMine(ref Node[,] chosenGrid, Point point)
     {
         if (chosenGrid[point.Column, point.Row].NodeFilled == false && chosenGrid[point.Column, point.Row].FiredAt == false)
         {
@@ -122,14 +122,14 @@ abstract class Attacks
 
 
 
-    static void MineDetonates(Node[,] chosenGrid)
+    static void MineDetonates(ref Node[,] chosenGrid)
     {
         for (int validNodesFound = 0; validNodesFound < 2; )
         {
             Point point = new(rng.Next(0, 8), rng.Next(0, 8));
 
             // Shoot returns a boolean that determines whether it shot successfully at the spot specified or not.
-            validNodesFound = Shoot(chosenGrid, point) ? validNodesFound + 1 : validNodesFound;
+            validNodesFound = Shoot(ref chosenGrid, point) ? validNodesFound + 1 : validNodesFound;
         }
     }
 }
