@@ -1,27 +1,21 @@
 ﻿using System;
-// Idea: Store all game data in one file that you can create new instances of. All other files/classes/methods will just alter these existing variables.
-//       This will make it a lot easier to create a new instance of a game if you choose to play again.
 
 namespace MyApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         { 
-            Grid grids = new();
-            grids.opponent.FillWithDefaultNodes();
-            grids.player.FillWithDefaultNodes();
-            grids.Display();
-            
-            Console.Write("\nTest : Press any key to randomly place ships.");
-            Console.ReadKey();
+            string playerChoice = "yes";
 
-            Ship.PlaceAll(grids.player, true);
-            Ship.PlaceAll(grids.opponent, false);
+            while (playerChoice == "yes")
+            {
+                Game.Start();
 
-            grids.Display();
-
-            Console.ReadKey();
+                Console.Clear();
+                Console.WriteLine("Would you like to play again? YES/NO");
+                playerChoice = Console.ReadLine().ToLower() ?? "no";
+            }
         }
     }
 } 
