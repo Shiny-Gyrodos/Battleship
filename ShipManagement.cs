@@ -16,7 +16,7 @@ abstract class Ship
     static bool shipPlaced;
     static (int vertical, int horizontal) coords = (rng.Next(0, 8), rng.Next(0, 8));
     static List<int> verticalIncrements = [];
-    static List<int> horizontalIncrements = []; // V This line is pretty much useless. It needs to be replaced with a better system. V
+    static List<int> horizontalIncrements = [];
     public static void Place(Node[,] chosenGrid, NodeTypes ship, bool isPlayerGrid)
     {
         ReinitializeVariables(false);
@@ -179,20 +179,20 @@ abstract class Ship
     #endregion 
     #region Ships destroyed?
 
-    public static bool CheckForDestroyed(Node[,] chosenGrid, ref List<NodeTypes>[] shipsLeftPrevious)
+    public static bool CheckForDestroyed(Node[,] chosenGrid, ref int[] shipsLeftPrevious)
     {
-        List<NodeTypes>[] shipsLeftUpdated = [[], [], [], [], [], []];
+        int[] shipsLeftUpdated = new int[6];
 
         // Sorts the node types left into their respective lists.
         foreach (Node node in chosenGrid)
         {
-            shipsLeftUpdated[(int)node.ShipType].Add(node.ShipType);
+            shipsLeftUpdated[(int)node.ShipType]++;
         }
 
         // Checks if a ship has been sunk.
         for (int i = 1; i <= 5; i++)
         {
-            if (shipsLeftUpdated[i].Count == 0 && shipsLeftPrevious[i].Count > 0)
+            if (shipsLeftUpdated[i] == 0 && shipsLeftPrevious[i] > 0)
             {
                 Console.WriteLine("\n" + (NodeTypes)i + " has sunk!");
                 shipsLeftPrevious = shipsLeftUpdated;
