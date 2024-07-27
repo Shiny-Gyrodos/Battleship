@@ -11,7 +11,6 @@ static class Game
         {
             grids.Refresh();
             gameActive = Player.TakeTurn(ref grids, ref playerData);
-            Thread.Sleep(1500);
             grids.Refresh();
 
             if (gameActive)
