@@ -41,15 +41,19 @@ abstract class Player : Attacks
                 player.Tokens++;
                 break;
             case ("strip bomb", >= 8): // Succeeds no matter what
+                player.Tokens -= 8;
                 StripBomb(ref grids.opponent, GetPlayerInputForStripBomb());
                 break;
             case ("nuke", >= 8): // Succeeds no matter what
+                player.Tokens -= 8;
                 Nuke(ref grids.opponent, GetPlayerInput());
                 break;
             case ("radar", >= 3):
+                player.Tokens -= 3;
                 LoopWithMessage(PlaceRadar, GetPlayerInput, ref grids.opponent, "\nYou can't place a radar there. Try somewhere else.");
                 break;
             case ("mine", >= 1):
+                player.Tokens--;
                 LoopWithMessage(PlaceMine, GetPlayerInput, ref grids.player, "\nYou can't place a mine there. Try somewhere else.");
                 break;
             default:
@@ -80,12 +84,12 @@ abstract class Player : Attacks
         {
             Console.Write("\nInput a letter (vertical coordinate), then a number (horizontal coordinate).");
 
-            (char testLetter, char testNumber) = (Console.ReadKey().KeyChar, Console.ReadKey().KeyChar);       
+            (char letter, char number) playerInput = (Console.ReadKey().KeyChar, Console.ReadKey().KeyChar);       
             
             // Checking if the letter is valid by using the character's values. See https://www.asciitable.com/ for more info.
-            if (ParseChar(testLetter) is var letter && letter.isColumn != null && ParseChar(testNumber) is var number && number.isColumn != null)
+            if (playerInput.letter >= 97 && playerInput.letter <= 104 && playerInput.number >= 49 && playerInput.number <= 57)
             {
-                return new((int)letter.parsedValue, (int)number.parsedValue);
+                return new(playerInput.letter - 97, playerInput.number - 49);
             }
             else
             {
@@ -105,28 +109,14 @@ abstract class Player : Attacks
 
             char numOrLetter = Console.ReadKey().KeyChar; 
 
-            if (ParseChar(numOrLetter) is var returnData && returnData.isColumn != null)
+            if (numOrLetter >= 49 && numOrLetter <= 104)
             {
-                return ((int)returnData.parsedValue, (bool)returnData.isColumn);
+                return (numOrLetter - 49, false);
             }
-        }
-    }
-
-
-
-    static (int? parsedValue, bool? isColumn) ParseChar(char character)
-    {
-        if (character >= 49 && character <= 57)
-        {
-            return (character - 49, false);
-        }
-        else if (character >= 97 && character <= 104)
-        {
-            return (character - 97, true);
-        }
-        else
-        {
-            return (null, null);
+            else if (numOrLetter >= 97 && numOrLetter <= 104)
+            {
+                return (numOrLetter - 97, true);
+            }
         }
     }
 }
