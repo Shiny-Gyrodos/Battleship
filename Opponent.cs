@@ -1,9 +1,11 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using MyApp;
 class Brain
 {
+    public int tokens = 0;
     public int[] shipsLeft = new int[6];
     public readonly List<Point> sucShots = new(2); // Stores coords successfully shot at for comparison.
     public Queue<Point> searchQueue = []; // Stores coords to shoot at
@@ -33,8 +35,13 @@ abstract class Opponent : Attacks
     {
         brain.turnPhase = brain.turnPhase == 2 && brain.searchQueue.Count == 0 ? 0 : brain.turnPhase;
 
-        if (LoopUntilExecution(Shoot, decisionTree[brain.turnPhase], ref grids.player, brain) is (Point, bool) data && data.shotShip)
+        if (LoopUntilExecution(brain.tokens >= 8 ? Nuke : Shoot, decisionTree[brain.turnPhase], ref grids.player, ref brain) is (Point, bool) data && data.shotShip)
         {
+            if (brain.searchQueue.Count == 0 && brain.turnPhase == 2)
+            {
+                brain.turnPhase = 0;
+            }
+
             if (brain.turnPhase != 2)
             {
                 brain.sucShots.Add(data.point);
@@ -96,13 +103,13 @@ abstract class Opponent : Attacks
         {
             if (point.Column >= 0 && point.Column <= 7 && point.Row >= 0 && point.Row <= 7)
             {
-                brain.searchQueue.Enqueue(point);
+                filteredQueue.Enqueue(point);
             }
         }
 
         brain.searchQueue = new(filteredQueue);
 
-        // Helper function eliminates ternary operator mess on lines 72 and 73.
+        // Helper function eliminates ternary operator mess in the for() loop.
         static Point GetAlteredCoords(Brain brain, int alteration, int multiplier = 1)
         {
             if (brain.sucShots[0].Column == brain.sucShots[1].Column)
@@ -119,7 +126,7 @@ abstract class Opponent : Attacks
 
 
     // Repeats the desired function until it succeeds.
-    static (Point point, bool shotShip) LoopUntilExecution(Attack attack, GetCoords obtainCoords, ref Node[,] grid, Brain brain)
+    static (Point point, bool shotShip) LoopUntilExecution(Attack attack, GetCoords obtainCoords, ref Node[,] grid, ref Brain brain)
     {
         Point point;
 
@@ -127,6 +134,11 @@ abstract class Opponent : Attacks
         {
             point = obtainCoords(brain);
         } while (!attack(ref grid, point));
+
+        if (attack == Shoot)
+        {
+            brain.tokens++;
+        }
 
         return (point, grid[point.Column, point.Row].NodeFilled == true);
     }
