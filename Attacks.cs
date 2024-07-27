@@ -7,18 +7,18 @@ abstract class Attacks
 
     public static bool Shoot(ref Node[,] chosenGrid, Point point)
     {
-        if (!chosenGrid[point.Column, point.Row].FiredAt)
+        if (!chosenGrid[point.Row, point.Column].FiredAt)
         {
-            switch (chosenGrid[point.Column, point.Row].NodeFilled)
+            switch (chosenGrid[point.Row, point.Column].NodeFilled)
             {
                 case true: // If ship
-                    chosenGrid[point.Column, point.Row] = new Node(true, true, 'X', NodeTypes.other);
+                    chosenGrid[point.Row, point.Column] = new Node(true, true, 'X', NodeTypes.other);
                     break;
                 case false: // If empty
-                    chosenGrid[point.Column, point.Row] = new Node(false, true, '0', NodeTypes.other);
+                    chosenGrid[point.Row, point.Column] = new Node(false, true, '0', NodeTypes.other);
                     break;
                 case null: // If mine
-                    chosenGrid[point.Column, point.Row] = new Node(null, true, '#', NodeTypes.other);
+                    chosenGrid[point.Row, point.Column] = new Node(null, true, '#', NodeTypes.other);
                     MineDetonates(ref chosenGrid);
                     break;
             }
@@ -46,7 +46,7 @@ abstract class Attacks
 
 
 
-    public static void Nuke(ref Node[,] chosenGrid, Point point) // Shoots at a 3x3 area around the specified coords.
+    public static bool Nuke(ref Node[,] chosenGrid, Point point) // Shoots at a 3x3 area around the specified coords.
     {
         for (int i = -1; i <= 1; i++)
         {
@@ -54,14 +54,16 @@ abstract class Attacks
             {
                 try 
                 { 
-                    if (chosenGrid[point.Column + i, point.Row + j].FiredAt == false)
+                    if (chosenGrid[point.Row + i, point.Column + j].FiredAt == false)
                     {
-                        Shoot(ref chosenGrid, point);
+                        Shoot(ref chosenGrid, point with {Row = point.Row + i, Column = point.Column + j});
                     }
                 }
                 catch (IndexOutOfRangeException) { }
             }
         }
+
+        return true;
     }
 
 
@@ -80,7 +82,7 @@ abstract class Attacks
     {
         // Parse checks to see if a radar already exists there.
         // Radars can't be placed on nodes you've already fired at.
-        if (int.TryParse(chosenGrid[point.Column, point.Row].Icon.ToString(), out _) || chosenGrid[point.Column, point.Row].FiredAt)
+        if (int.TryParse(chosenGrid[point.Row, point.Column].Icon.ToString(), out _) || chosenGrid[point.Row, point.Column].FiredAt)
         {
             return false;
         }
@@ -94,7 +96,7 @@ abstract class Attacks
             {
                 try 
                 { 
-                    if (chosenGrid[point.Column + i, point.Row + j].NodeFilled != false && !chosenGrid[point.Column + i, point.Row + j].FiredAt)  
+                    if (chosenGrid[point.Row + i, point.Column + j].NodeFilled != false && !chosenGrid[point.Row + i, point.Column + j].FiredAt)  
                     {
                         detectedObjects++;
                     }    
@@ -103,7 +105,7 @@ abstract class Attacks
             }
         }
 
-        chosenGrid[point.Column, point.Row].Icon = (char)(detectedObjects + 48);
+        chosenGrid[point.Row, point.Column].Icon = (char)(detectedObjects + 48);
         return true;
     }
 
@@ -111,9 +113,9 @@ abstract class Attacks
 
     public static bool PlaceMine(ref Node[,] chosenGrid, Point point)
     {
-        if (chosenGrid[point.Column, point.Row].NodeFilled == false && chosenGrid[point.Column, point.Row].FiredAt == false)
+        if (chosenGrid[point.Row, point.Column].NodeFilled == false && chosenGrid[point.Row, point.Column].FiredAt == false)
         {
-            chosenGrid[point.Column, point.Row] = new Node(null, false, '+', NodeTypes.other);
+            chosenGrid[point.Row, point.Column] = new Node(null, false, '+', NodeTypes.other);
             return true;
         }
 
